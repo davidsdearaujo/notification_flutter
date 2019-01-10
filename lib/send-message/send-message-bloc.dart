@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:rxdart/rxdart.dart';
 
 class SendMessageBloc {
@@ -27,17 +29,38 @@ class SendMessageBloc {
   );
   Observable<List<String>> get outListTypes => _listTypesController.stream;
 
-  var _selectedTypeController = BehaviorSubject<String>();
+  var _selectedTypeController = BehaviorSubject<String>(seedValue: "Texto");
   Observable<String> get outSelectedType => _selectedTypeController.stream;
 
   void setType(String tipo) {
     _selectedTypeController.add(tipo);
   }
 
+  //Image
+  var _selectedImageController = BehaviorSubject<File>();
+  Observable<File> get outSelectedImage => _selectedImageController.stream;
+
+  void setSelectedImage(File file){
+    _selectedImageController.add(file);
+  }
+
+  //Video
+  var _selectedVideoController = BehaviorSubject<File>();
+  Observable<File> get outSelectedVideo => _selectedVideoController.stream;
+
+  void setSelectedVideo(File file){
+    _selectedVideoController.add(file);
+  }
+
+  var _videoIsPlayingController = BehaviorSubject<bool>();
+  Observable<bool> get outVideoIsPlaying => _videoIsPlayingController.stream;
+
   void dispose() {
     _listGroupsController.close();
     _selectedGroupController.close();
     _listTypesController.close();
     _selectedTypeController.close();
+    _selectedImageController.close();
+    _videoIsPlayingController.close();
   }
 }

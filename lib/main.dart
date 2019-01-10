@@ -4,8 +4,16 @@ import 'send-message/send-message-screen.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  MyAppState createState() {
+    return new MyAppState();
+  }
+}
+
+class MyAppState extends State<MyApp> 
+{
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
