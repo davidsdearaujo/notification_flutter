@@ -83,7 +83,7 @@ class ImagePickerHelper {
                                     setImage(video);
                                   }),
                           text: "Galeria",
-                          icon: Icons.image,
+                          icon: Icons.video_library,
                           context: context,
                         ),
                         _buildButton(
@@ -94,7 +94,7 @@ class ImagePickerHelper {
                                     setImage(video);
                                   }),
                           text: "Câmera",
-                          icon: Icons.camera_alt,
+                          icon: Icons.videocam,
                           context: context,
                         )
                       ],

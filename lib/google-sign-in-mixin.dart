@@ -14,7 +14,6 @@ mixin GoogleSignInMixin<T extends StatefulWidget> on State<T>{
   void initState() {
     super.initState();
 
-
     _googleSignIn.signIn();
     // _googleSignIn.onCurrentUserChanged
     //     .listen((GoogleSignInAccount account) async {

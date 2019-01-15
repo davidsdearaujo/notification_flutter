@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'home/home-screen.dart';
 import 'send-message/send-message-screen.dart';
+import 'firebase-messaging-receive/firebase-messaging-receive-mixin.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,6 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> 
+with FirebaseMessagingReceiveMixin 
 {
 
   @override
@@ -19,7 +22,7 @@ class MyAppState extends State<MyApp>
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: SendMessageScreen(),
+      home: HomeScreen(),
     );
   }
 }

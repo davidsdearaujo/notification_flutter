@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
-class DropdownWidget extends StatelessWidget {
-  final Stream<String> selectedStream;
-  final Stream<List<String>> listStream;
-  final Function(String) setSelected;
+class DropdownWidget<T> extends StatelessWidget {
+  final Observable<T> selectedStream;
+  final Observable<List<T>> listStream;
+  final Function(T) setSelected;
   final String label;
 
   DropdownWidget({
@@ -15,23 +16,23 @@ class DropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<String>(
+    return StreamBuilder<T>(
       stream: selectedStream,
       builder: (context, selectedType) {
-        return StreamBuilder<List<String>>(
+        return StreamBuilder<List<T>>(
           stream: listStream,
           builder: (context, types) {
             if (types.hasData) {
               return InputDecorator(
                 decoration: InputDecoration(labelText: label),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
+                  child: DropdownButton<T>(
                     value: selectedType.data,
                     hint: Text('Selecione'),
                     items: types.data
                         .map(
                           (item) => DropdownMenuItem(
-                                child: new Text(item),
+                                child: Text(item.toString()),
                                 value: item,
                               ),
                         )
