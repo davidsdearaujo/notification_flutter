@@ -35,33 +35,6 @@ mixin FirebaseMessagingReceiveMixin<T extends StatefulWidget> on State<T> {
           json.decode(msg["data"]["notificacao"]),
         );
         bloc.adicionarNotificacao(notificacao);
-        // sendMessageScreenScaffoldKey.currentState.showSnackBar(
-        //   SnackBar(
-        //     duration: Duration(seconds: 5),
-        //     content: Column(
-        //       mainAxisSize: MainAxisSize.min,
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: <Widget>[
-        //         Text(
-        //           notificacao.titulo,
-        //           style: TextStyle(
-        //             fontWeight: FontWeight.bold,
-        //             color: Colors.white,
-        //           ),
-        //         ),
-        //         SizedBox(height: 5),
-        //         Text(
-        //           notificacao.texto,
-        //           style: TextStyle(color: Colors.white),
-        //         ),
-        //       ],
-        //     ),
-        //     action: SnackBarAction(
-        //       label: "Visualizar",
-        //       onPressed: () => abrirNotificacao(notificacao),
-        //     ),
-        //   ),
-        // );
         print(msg);
       },
     );
@@ -83,13 +56,5 @@ mixin FirebaseMessagingReceiveMixin<T extends StatefulWidget> on State<T> {
 
   void update(String token) {
     print(token);
-  }
-
-  void abrirNotificacao(NotificationResumeModel notificacao) {
-    Navigator.of(currentContext).push(
-      MaterialPageRoute(
-        builder: (context) => NotificationResumeScreen(model: notificacao),
-      ),
-    );
   }
 }

@@ -1,4 +1,5 @@
-class NotificationResumeModel {
+class NotificationsListModel {
+  Map<String, dynamic> parsedJson;
   int id;
   String uid;
   int listaId;
@@ -12,9 +13,8 @@ class NotificationResumeModel {
   String enviadopor;
   String enviadopara;
   String enviadoem;
-  int tempoEmMs;
 
-  NotificationResumeModel({
+  NotificationsListModel({
     this.id,
     this.uid,
     this.listaId,
@@ -28,11 +28,11 @@ class NotificationResumeModel {
     this.enviadopor,
     this.enviadopara,
     this.enviadoem,
-    this.tempoEmMs
+    this.parsedJson,
   });
 
-  factory NotificationResumeModel.fromJson(Map<String, dynamic> parsedJson) {
-    return NotificationResumeModel(
+  factory NotificationsListModel.fromJson(Map<String, dynamic> parsedJson) {
+    return NotificationsListModel(
       arquivo: parsedJson["arquivo"],
       createdAt: parsedJson["created_at"],
       data: parsedJson["data"],
@@ -46,7 +46,7 @@ class NotificationResumeModel {
       tipo: TipoMensagemModel.fromApiValue(parsedJson["tipo"]),
       titulo: parsedJson["titulo"],
       uid: parsedJson["uid"],
-      tempoEmMs: parsedJson["tempo"],
+      parsedJson: parsedJson
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'home/home-screen.dart';
-import 'send-message/send-message-screen.dart';
 import 'firebase-messaging-receive/firebase-messaging-receive-mixin.dart';
 
 void main() => runApp(MyApp());

@@ -19,24 +19,40 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
     return Scaffold(
       appBar: AppBar(title: Text("Notificação")),
       body: ListView(
+        padding: EdgeInsets.all(15),
         children: <Widget>[
-          Text(
-            widget.model.titulo,
-            style: TextStyle(fontWeight: FontWeight.bold),
+          ListTile(
+            title: Text(
+              widget.model.titulo,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           _buildConteudo(),
-          Text("Enviado em: ${widget.model.enviadoem}"),
-          Text("Enviado por: ${widget.model.enviadopor}"),
+          Padding(
+            padding: EdgeInsets.only(top: 10, right: 5),
+            child: 
+            Text(
+                  "~${widget.model.enviadopor}  ${widget.model.enviadoem}",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: Colors.black45),
+                ),
+          ),
+          widget.model.enviadopara == null || widget.model.enviadopara.isEmpty
+              ? Container()
+              : ListTile(
+                  title: Text("Enviado para: ${widget.model.enviadopara}"),
+                ),
+          // ListTile(title: Text("Identificador: ${widget.model.id}")),
         ],
       ),
     );
   }
 
   Widget _buildConteudo() {
-    switch (widget.model.tipo) {
-      case "T":
-        return Text(widget.model.texto);
-      case "I":
+    switch (widget.model.tipo.tipo) {
+      case TipoEnum.texto:
+        return ListTile(title: Text(widget.model.texto));
+      case TipoEnum.imagem:
         return Image.network(widget.model.arquivo);
 
       default:

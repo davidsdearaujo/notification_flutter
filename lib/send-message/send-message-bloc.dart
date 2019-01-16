@@ -118,14 +118,14 @@ class SendMessageBloc {
           ? TimeOfDay.now()
           : _selectedHoraProgramacaoController.value;
 
-      List<int> arquivo;
+      File arquivo;
       switch (_selectedTypeController.value.tipo) {
         case TipoEnum.imagem:
-          arquivo = await _selectedImageController.value.readAsBytes();
+          arquivo = _selectedImageController.value;
           break;
 
         case TipoEnum.video:
-          arquivo = await _selectedVideoController.value.readAsBytes();
+          arquivo = _selectedVideoController.value;
           break;
 
         default:

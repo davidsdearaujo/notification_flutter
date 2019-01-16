@@ -15,7 +15,7 @@ mixin ScaffoldNotificationMixin<T extends StatefulWidget> on State<T> {
       if (notificacao != null) {
         scaffoldKey.currentState.showSnackBar(
           SnackBar(
-            duration: Duration(seconds: 5),
+            duration: Duration(milliseconds: notificacao.tempoEmMs ?? 5000),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
