@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'send-message-model.dart';
 
 class SendMessageService {
@@ -44,7 +45,7 @@ class SendMessageService {
     if (tipo == TipoEnum.texto)
       formdata.add("texto", texto);
     else
-      formdata.add("arquivo", new UploadFileInfo(arquivo, 'arquivo'));
+      formdata.add("arquivo", new UploadFileInfo(arquivo, basename(arquivo.path)));
 
     try {
       var response = await dio.post<int>(
