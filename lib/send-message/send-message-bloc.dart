@@ -9,6 +9,7 @@ import 'send-message-service.dart';
 
 class SendMessageBloc {
   SendMessageService service;
+  VideoPlayerController playerController;
 
   String uid = "FEn2LN2KM6ZprhpeUul9ui6Ynm23";
 
@@ -47,7 +48,11 @@ class SendMessageBloc {
   Observable<TipoMensagemModel> get outSelectedType =>
       _selectedTypeController.stream;
 
-  void setType(TipoMensagemModel tipo) {
+  void setType(TipoMensagemModel tipo) async {
+    if (tipo.tipo != TipoEnum.video) {
+      await playerController?.dispose();
+      playerController = null;
+    }
     _selectedTypeController.add(tipo);
   }
 
@@ -63,7 +68,16 @@ class SendMessageBloc {
   var _selectedVideoController = BehaviorSubject<File>(seedValue: null);
   Observable<File> get outSelectedVideo => _selectedVideoController.stream;
 
-  void setSelectedVideo(File file) {
+  void setSelectedVideo(File file) async {
+    if (_selectedVideoController.value != null &&
+        playerController?.dataSource != "file://${file.path}") {
+      
+      await playerController?.dispose();
+      playerController = null;
+      playerController = VideoPlayerController.file(file);
+    }
+    playerController = VideoPlayerController.file(file);
+    
     _selectedVideoController.add(file);
   }
 
@@ -113,6 +127,8 @@ class SendMessageBloc {
   void enviar({@required String titulo, String texto}) async {
     _salvarIsLoadingController.add(true);
     try {
+      //Validação dos campos obrigatórios
+
       DateTime data = (_selectedProgramacaoController.value == "Agora")
           ? DateTime.now()
           : _selectedDataProgramacaoController.value;
@@ -169,6 +185,6 @@ class SendMessageBloc {
     _selectedHoraProgramacaoController.close();
 
     _salvarIsLoadingController.close();
-
+    playerController.dispose();
   }
 }
