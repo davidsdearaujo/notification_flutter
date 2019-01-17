@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:custom_chewie/custom_chewie.dart';
+import 'package:video_player/video_player.dart';
 
 import 'send-message-model.dart';
 import 'send-message-bloc.dart';
@@ -19,16 +21,18 @@ class SendMessageScreen extends StatefulWidget {
 
 class _SendMessageScreenState extends State<SendMessageScreen>
     with ScaffoldNotificationMixin {
+  SendMessageBloc bloc;
+  ImagePickerHelper helper;
+  VideoPlayerController playerController;
 
-  SendMessageBloc bloc = SendMessageBloc()..getTopics();
   var conteudoController = TextEditingController();
   var tituloController = TextEditingController();
-  ImagePickerHelper helper;
 
   @override
   void initState() {
     super.initState();
     helper = ImagePickerHelper();
+    bloc = SendMessageBloc()..getTopics();
   }
 
   @override
@@ -148,39 +152,100 @@ class _SendMessageScreenState extends State<SendMessageScreen>
   }
 
   Widget _buildVideoContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        StreamBuilder<File>(
-          stream: bloc.outSelectedVideo,
-          builder: (context, video) {
-            return Padding(
-                padding: EdgeInsets.only(bottom: 15),
-                child: Text(video.data?.path ?? "Nenhum vídeo selecionado"));
-          },
-        ),
-        Container(
-          height: 60,
-          child: RaisedButton(
-            color: Theme.of(context).accentColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            onPressed: () => helper.showVideo(context, bloc.setSelectedVideo),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.movie_creation, color: Colors.white),
-                SizedBox(width: 15),
-                Text(
-                  "Selecionar Vídeo",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
+    return StreamBuilder<File>(
+      stream: bloc.outSelectedVideo,
+      builder: (context, snapshot) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 15),
+              child: (snapshot.data?.path == null)
+                  ? Text("Nenhum vídeo selecionado")
+                  : Stack(
+                      children: <Widget>[
+                        Chewie(
+                          VideoPlayerController.file(snapshot.data),
+                          aspectRatio: 4 / 2,
+                          autoPlay: true,
+                          looping: true,
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.all(5),
+                          child: FloatingActionButton(
+                            child: Icon(Icons.video_call),
+                            onPressed: () => helper.showVideo(
+                                  context,
+                                  bloc.setSelectedVideo,
+                                ),
+                            tooltip: "Alterar Vídeo",
+                            mini: true,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
-          ),
-        ),
-      ],
+            (snapshot.data?.path == null)
+                ? Container(
+                    height: 60,
+                    child: RaisedButton(
+                      color: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      onPressed: () =>
+                          helper.showVideo(context, bloc.setSelectedVideo),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.movie_creation, color: Colors.white),
+                          SizedBox(width: 15),
+                          Text(
+                            "Selecionar Vídeo",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Container(),
+          ],
+        );
+      },
     );
+    // return Column(
+    //   mainAxisSize: MainAxisSize.min,
+    //   children: <Widget>[
+    //     StreamBuilder<File>(
+    //       stream: bloc.outSelectedVideo,
+    //       builder: (context, video) {
+    //         return Padding(
+    //             padding: EdgeInsets.only(bottom: 15),
+    //             child: Text(video.data?.path ?? "Nenhum vídeo selecionado"));
+    //       },
+    //     ),
+    //     Container(
+    //       height: 60,
+    //       child: RaisedButton(
+    //         color: Theme.of(context).accentColor,
+    //         shape:
+    //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    //         onPressed: () => helper.showVideo(context, bloc.setSelectedVideo),
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: <Widget>[
+    //             Icon(Icons.movie_creation, color: Colors.white),
+    //             SizedBox(width: 15),
+    //             Text(
+    //               "Selecionar Vídeo",
+    //               style: TextStyle(color: Colors.white, fontSize: 16),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   Widget _buildDateTimeButtons() {
@@ -258,27 +323,26 @@ class _SendMessageScreenState extends State<SendMessageScreen>
       stream: bloc.outSalvarIsLoading,
       builder: (context, loading) {
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 5),
-          height: 45,
+          height: 60,
           child: RaisedButton(
-            textColor: Colors.white,
-            color: Colors.green,
-            child: !loading.hasData || loading.data
-                ? SizedBox(
-                    height: 15.0,
-                    width: 15.0,
-                    child: const CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Text("ENVIAR"),
+            color: Theme.of(context).accentColor,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "< ENVIAR >",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
             onPressed: () {
               if (loading.hasData && !loading.data) {
                 bloc.enviar(
-                    titulo: tituloController.text,
-                    texto: conteudoController.text);
+                  titulo: tituloController.text,
+                  texto: conteudoController.text,
+                );
               }
             },
           ),

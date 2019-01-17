@@ -47,7 +47,7 @@ class SendMessageService {
       formdata.add("arquivo", new UploadFileInfo(arquivo, 'arquivo'));
 
     try {
-      var response = await dio.post<String>(
+      var response = await dio.post<int>(
         '$url/postnotificacao',
         data: formdata,
         options: Options(method: 'POST', responseType: ResponseType.JSON),

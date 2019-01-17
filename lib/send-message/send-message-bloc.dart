@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'send-message-model.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:video_player/video_player.dart';
+
+import 'send-message-model.dart';
 import 'send-message-service.dart';
 
 class SendMessageBloc {
   SendMessageService service;
+
   String uid = "FEn2LN2KM6ZprhpeUul9ui6Ynm23";
 
   SendMessageBloc() {
@@ -166,5 +169,6 @@ class SendMessageBloc {
     _selectedHoraProgramacaoController.close();
 
     _salvarIsLoadingController.close();
+
   }
 }

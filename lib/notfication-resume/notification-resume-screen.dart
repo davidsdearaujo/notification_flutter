@@ -1,4 +1,6 @@
+import 'package:custom_chewie/custom_chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 import 'notification-resume-model.dart';
 import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
@@ -30,12 +32,11 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
           _buildConteudo(),
           Padding(
             padding: EdgeInsets.only(top: 10, right: 5),
-            child: 
-            Text(
-                  "~${widget.model.enviadopor}  ${widget.model.enviadoem}",
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: Colors.black45),
-                ),
+            child: Text(
+              "~${widget.model.enviadopor}  ${widget.model.enviadoem}",
+              textAlign: TextAlign.end,
+              style: TextStyle(color: Colors.black45),
+            ),
           ),
           widget.model.enviadopara == null || widget.model.enviadopara.isEmpty
               ? Container()
@@ -54,6 +55,13 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
         return ListTile(title: Text(widget.model.texto));
       case TipoEnum.imagem:
         return Image.network(widget.model.arquivo);
+      case TipoEnum.video:
+        return Chewie(
+          VideoPlayerController.network(widget.model.arquivo),
+          aspectRatio: 4 / 2,
+          autoPlay: true,
+          looping: true,
+        );
 
       default:
         return Container();
