@@ -16,6 +16,19 @@ class NotificationResumeScreen extends StatefulWidget {
 
 class _NotificationResumeScreenState extends State<NotificationResumeScreen>
     with ScaffoldNotificationMixin {
+  VideoPlayerController playerController;
+  @override
+  void initState() {
+    super.initState();
+    playerController = VideoPlayerController.network(widget.model.arquivo);
+  }
+
+  @override
+  void dispose() {
+    playerController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +70,7 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
         return Image.network(widget.model.arquivo);
       case TipoEnum.video:
         return Chewie(
-          VideoPlayerController.network(widget.model.arquivo),
+          playerController,
           aspectRatio: 4 / 2,
           autoPlay: true,
           looping: true,
