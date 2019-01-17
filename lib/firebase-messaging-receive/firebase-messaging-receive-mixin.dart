@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:message/send-message/send-message-screen.dart';
 
 import '../notfication-resume/notification-resume-model.dart';
-import '../notfication-resume/notification-resume-screen.dart';
 import 'firebase-messaging-receive-bloc.dart';
 
 BuildContext currentContext;
