@@ -44,7 +44,16 @@ class DropdownWidget<T> extends StatelessWidget {
                 ),
               );
             } else {
-              return CircularProgressIndicator();
+              return Center(
+                child: SizedBox(
+                  height: 15.0,
+                  width: 15.0,
+                  child:  CircularProgressIndicator(
+                    backgroundColor: Colors.white,
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+                  ),
+                ),
+              );
             }
           },
         );
