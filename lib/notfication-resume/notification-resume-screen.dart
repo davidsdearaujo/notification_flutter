@@ -1,4 +1,5 @@
-import 'package:custom_chewie/custom_chewie.dart';
+
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -66,8 +67,10 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
     switch (widget.model.tipo.tipo) {
       case TipoEnum.texto:
         return ListTile(title: Text(widget.model.texto));
+
       case TipoEnum.imagem:
         return Image.network(widget.model.arquivo);
+        
       case TipoEnum.video:
         return Chewie(
           playerController,

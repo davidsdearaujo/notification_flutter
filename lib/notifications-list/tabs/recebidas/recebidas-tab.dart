@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:loadmore/loadmore.dart';
 
 import '../../../notfication-resume/notification-resume-model.dart';
 import '../../../notfication-resume/notification-resume-screen.dart';
+import '../../../widgets/loading/loading-widget.dart';
 import '../../notifications-list-model.dart';
 import 'recebidas-bloc.dart';
 
@@ -16,57 +18,81 @@ class _RecebidasTabState extends State<RecebidasTab>
   bool get wantKeepAlive => true;
 
   RecebidasBloc bloc;
-  ScrollController scrollController;
+  // ScrollController _scrollController;
 
   @override
   void initState() {
-    bloc = RecebidasBloc()..buscarNotificacoes();
-
-    scrollController = ScrollController()
-      ..addListener(() => bloc.scroolListener(scrollController));
     super.initState();
+    bloc = RecebidasBloc();
+    bloc..buscarNotificacoes();
+    // _scrollController = new ScrollController()..addListener(_scrollListener);
   }
+
+  // void _scrollListener() {
+  //   if ((_scrollController.offset >
+  //           _scrollController.position.maxScrollExtent - 300) &&
+  //       !bloc.isLoading) bloc.buscarNotificacoes();
+  // }
 
   @override
   void dispose() {
-    bloc.dispose();
     super.dispose();
+    bloc?.dispose();
+    // _scrollController
+    //   ..removeListener(_scrollListener)
+    //   ..dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<NotificationsListModel>>(
-      stream: bloc.outNotificacoes,
+      stream: bloc.apiTotalFlux,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data.length == 0) {
-          return Center(child: CircularProgressIndicator());
+          return LoadingWidget(small: false);
         } else {
-          return ListView.builder(
-            controller: scrollController,
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) {
-              var currentItem = snapshot.data[index];
-              return ListTile(
-                title: Text(currentItem.titulo),
-                subtitle: Text(currentItem.enviadopor),
-                trailing: Column(
-                  children: <Widget>[
-                    Text(currentItem.tipo.texto),
-                    Text(currentItem.enviadoem),
-                  ],
-                ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => NotificationResumeScreen(
-                            model: NotificationResumeModel.fromJson(
-                                currentItem.parsedJson),
-                          ),
-                    ),
-                  );
-                },
-              );
+          return LoadMore(
+            isFinish: bloc.isFinish,
+            onLoadMore: bloc.buscarNotificacoes,
+            textBuilder: (status) {
+              switch (status) {
+                case LoadMoreStatus.fail:
+                  return "Não foi possível buscar os dados";
+
+                case LoadMoreStatus.nomore:
+                case LoadMoreStatus.loading:
+                case LoadMoreStatus.idle:
+                  return "";
+              }
             },
+            child: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                var currentItem = snapshot.data[index];
+                return ListTile(
+                  title: Text(currentItem.titulo),
+                  subtitle: Text(currentItem.enviadopor),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(currentItem.tipo.texto),
+                      SizedBox(height: 5),
+                      Text(currentItem.enviadoem),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => NotificationResumeScreen(
+                              model: NotificationResumeModel.fromJson(
+                                  currentItem.parsedJson),
+                            ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           );
         }
       },

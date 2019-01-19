@@ -15,31 +15,19 @@ class SendMessageBloc {
 
   SendMessageBloc() {
     service = SendMessageService();
+    outListTopics = Observable.fromFuture(service.getTopics());
   }
 
   //Topics
-  var _listTopicsController =
-      BehaviorSubject<List<Topico>>(seedValue: List<Topico>());
-  Observable<List<Topico>> get outListTopics => _listTopicsController.stream;
+  Observable<List<Topico>> outListTopics;
 
   var _selectedTopicController = BehaviorSubject<Topico>();
   Observable<Topico> get outSelectedTopic => _selectedTopicController.stream;
-
-  void setSelectedTopic(Topico val) {
-    _selectedTopicController.add(val);
-  }
-
-  Future<Null> getTopics() async {
-    var lista = await service.getTopics();
-    _listTopicsController.add(lista);
-  }
+  Sink<Topico> get outSinkSelectedTopic => _selectedTopicController.sink;
 
   //Types
-  var _listTypesController = BehaviorSubject<List<TipoMensagemModel>>(
-    seedValue: TipoMensagemModel.list,
-  );
   Observable<List<TipoMensagemModel>> get outListTypes =>
-      _listTypesController.stream;
+      Observable.just(TipoMensagemModel.list);
 
   var _selectedTypeController = BehaviorSubject<TipoMensagemModel>(
     seedValue:
@@ -59,10 +47,7 @@ class SendMessageBloc {
   //Image
   var _selectedImageController = BehaviorSubject<File>(seedValue: null);
   Observable<File> get outSelectedImage => _selectedImageController.stream;
-
-  void setSelectedImage(File file) {
-    _selectedImageController.add(file);
-  }
+  Sink<File> get outSelectedImageSink => _selectedImageController.sink;
 
   //Video
   var _selectedVideoController = BehaviorSubject<File>(seedValue: null);
@@ -71,25 +56,22 @@ class SendMessageBloc {
   void setSelectedVideo(File file) async {
     if (_selectedVideoController.value != null &&
         playerController?.dataSource != "file://${file.path}") {
-      
       await playerController?.dispose();
       playerController = null;
       playerController = VideoPlayerController.file(file);
     }
     playerController = VideoPlayerController.file(file);
-    
+
     _selectedVideoController.add(file);
   }
 
   //Programação
-  var _listProgramacaoController = BehaviorSubject<List<String>>(
-    seedValue: [
-      "Agora",
-      "Agendar",
-    ],
-  );
-  Observable<List<String>> get outListProgramacao =>
-      _listProgramacaoController.stream;
+  Observable<List<String>> get outListProgramacao => Observable.just(
+        [
+          "Agora",
+          "Agendar",
+        ],
+      );
 
   var _selectedProgramacaoController =
       BehaviorSubject<String>(seedValue: "Agora");
@@ -128,6 +110,30 @@ class SendMessageBloc {
     _salvarIsLoadingController.add(true);
     try {
       //Validação dos campos obrigatórios
+      if (_selectedTopicController.value == null) {
+        _selectedTopicController.addError("Campo obrigatório.");
+      }
+
+      if (_selectedTypeController.value == null) {
+        _selectedTypeController.addError("Campo obrigatório.");
+      } else {
+        switch (_selectedTypeController.value.tipo) {
+          case TipoEnum.imagem:
+            if (_selectedImageController.value == null)
+              _selectedImageController.addError("Campo obrigatório.");
+            break;
+
+          case TipoEnum.video:
+            if (_selectedVideoController.value == null)
+              _selectedVideoController.addError("Campo obrigatório.");
+            break;
+
+          case TipoEnum.texto:
+            if (texto == null || texto == "")
+              // _selectedVideoController.addError("Campo obrigatório.");
+            break;
+        }
+      }
 
       DateTime data = (_selectedProgramacaoController.value == "Agora")
           ? DateTime.now()
@@ -152,7 +158,7 @@ class SendMessageBloc {
           break;
       }
 
-      service.sendMessage(
+      await service.sendMessage(
         uid: this.uid,
         data: data,
         hora: hora,
@@ -170,21 +176,15 @@ class SendMessageBloc {
   }
 
   void dispose() {
-    _listTypesController.close();
     _selectedTypeController.close();
-
     _selectedImageController.close();
-
-    _listTopicsController.close();
     _selectedTopicController.close();
-
-    _listProgramacaoController.close();
     _selectedProgramacaoController.close();
 
     _selectedDataProgramacaoController.close();
     _selectedHoraProgramacaoController.close();
 
     _salvarIsLoadingController.close();
-    playerController.dispose();
+    playerController?.dispose();
   }
 }

@@ -41,10 +41,19 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               _buildButton(
                 icon: Icons.content_copy,
-                label: "Enviadas",
+                label: "Histórico 1",
                 action: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => NotificationsListScreen(),
+                      ),
+                    ),
+              ),
+              _buildButton(
+                icon: Icons.content_copy,
+                label: "Histórico Recebidos",
+                action: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => NotificationsListScreen(somenteRecebidos: true),
                       ),
                     ),
               ),
@@ -95,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(icon, color: Colors.white, size: 55),
-            Text(label, style: TextStyle(color: Colors.white, fontSize: 20))
+            Text(label, style: TextStyle(color: Colors.white, fontSize: 20), textAlign: TextAlign.center,)
           ],
         ),
       ),

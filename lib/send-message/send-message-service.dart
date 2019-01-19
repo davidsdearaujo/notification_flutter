@@ -21,7 +21,7 @@ class SendMessageService {
     return lista;
   }
 
-  void sendMessage({
+  Future<int> sendMessage({
     @required String uid,
     @required int listaId,
     @required String titulo,
@@ -47,6 +47,7 @@ class SendMessageService {
     else
       formdata.add("arquivo", new UploadFileInfo(arquivo, basename(arquivo.path)));
 
+    int _response = 0;
     try {
       var response = await dio.post<int>(
         '$url/postnotificacao',
@@ -55,9 +56,12 @@ class SendMessageService {
       );
       print(response.statusCode);
       print(response.data);
+
+      _response = response.data;
     } on DioError catch (e) {
       print(e.message);
     }
+    return _response;
   }
 }
 

@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:custom_chewie/custom_chewie.dart';
-import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
+import '../widgets/dropdown/dropdown-widget.dart';
+import '../widgets/loading/loading-widget.dart';
 import 'send-message-model.dart';
 import 'send-message-bloc.dart';
 import 'send-message-service.dart';
 
 import '../helpers/date-time-helper.dart';
 import '../helpers/image-picker-helper.dart';
-import '../dropdown/dropdown-widget.dart';
 import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 
 class SendMessageScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
   void initState() {
     super.initState();
     helper = ImagePickerHelper();
-    bloc = SendMessageBloc()..getTopics();
+    bloc = SendMessageBloc();
   }
 
   @override
@@ -52,7 +52,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
           DropdownWidget<Topico>(
             listStream: bloc.outListTopics,
             selectedStream: bloc.outSelectedTopic,
-            setSelected: bloc.setSelectedTopic,
+            setSelected: bloc.outSinkSelectedTopic.add,
             label: "Tópico",
           ),
           DropdownWidget(
@@ -125,13 +125,16 @@ class _SendMessageScreenState extends State<SendMessageScreen>
               child: Stack(
                 children: <Widget>[
                   Container(
-                      child: (snapshot.hasData)
-                          ? Image.file(snapshot.data, fit: BoxFit.cover)
-                          : null),
+                    child: (snapshot.hasData)
+                        ? Image.file(snapshot.data, fit: BoxFit.cover)
+                        : null,
+                  ),
                   Container(color: Color.fromRGBO(0, 0, 0, 490)),
                   InkWell(
-                    onTap: () =>
-                        helper.showImage(context, bloc.setSelectedImage),
+                    onTap: () => helper.showImage(
+                          context,
+                          bloc.outSelectedImageSink.add,
+                        ),
                     child: Center(
                       child: Icon(
                         Icons.camera_alt,
@@ -162,31 +165,25 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                   ? Text("Nenhum vídeo selecionado")
                   : Stack(
                       children: <Widget>[
-                        // new Material(
-                        //   child: new AspectRatio(
-                        //     aspectRatio: 4 / 2,
-                        //     child: new VideoPlayer(bloc.playerController),
-                        //   ),
-                        // ),
                         Chewie(
-                          bloc.playerController, 
+                          bloc.playerController,
                           aspectRatio: 4 / 2,
                           autoPlay: true,
                           looping: true,
                         ),
-                        // Container(
-                        //   alignment: Alignment.topLeft,
-                        //   padding: EdgeInsets.all(5),
-                        //   child: FloatingActionButton(
-                        //     child: Icon(Icons.video_call),
-                        //     onPressed: () => helper.showVideo(
-                        //           context,
-                        //           bloc.setSelectedVideo,
-                        //         ),
-                        //     tooltip: "Alterar Vídeo",
-                        //     mini: true,
-                        //   ),
-                        // ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.all(5),
+                          child: FloatingActionButton(
+                            child: Icon(Icons.video_call),
+                            onPressed: () => helper.showVideo(
+                                  context,
+                                  bloc.setSelectedVideo,
+                                ),
+                            tooltip: "Alterar Vídeo",
+                            mini: true,
+                          ),
+                        ),
                       ],
                     ),
             ),
@@ -302,18 +299,10 @@ class _SendMessageScreenState extends State<SendMessageScreen>
             ),
             child: (loading.hasData && !loading.data)
                 ? Text(
-                    "< ENVIAR >",
+                    "ENVIAR NOTIFICAÇÃO",
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   )
-                : SizedBox(
-                    height: 15.0,
-                    width: 15.0,
-                    child: const CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
+                : LoadingWidget(color:Colors.white),
             onPressed: () {
               if (loading.hasData && !loading.data) {
                 bloc.enviar(

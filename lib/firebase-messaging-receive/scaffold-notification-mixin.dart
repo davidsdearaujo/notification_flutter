@@ -5,12 +5,13 @@ import 'firebase-messaging-receive-bloc.dart';
 import '../notfication-resume/notification-resume-screen.dart';
 
 mixin ScaffoldNotificationMixin<T extends StatefulWidget> on State<T> {
-  FirebaseMessagingReceiveBloc _bloc = FirebaseMessagingReceiveBloc.instance();
+  FirebaseMessagingReceiveBloc _bloc;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _bloc = FirebaseMessagingReceiveBloc.instance();
     _bloc.outNotificacao.listen((notificacao) {
       if (notificacao != null) {
         scaffoldKey.currentState.showSnackBar(

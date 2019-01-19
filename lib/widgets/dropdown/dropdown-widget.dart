@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../loading/loading-widget.dart';
+
 class DropdownWidget<T> extends StatelessWidget {
   final Observable<T> selectedStream;
   final Observable<List<T>> listStream;
@@ -44,16 +46,7 @@ class DropdownWidget<T> extends StatelessWidget {
                 ),
               );
             } else {
-              return Center(
-                child: SizedBox(
-                  height: 15.0,
-                  width: 15.0,
-                  child:  CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
-                  ),
-                ),
-              );
+              return LoadingWidget();
             }
           },
         );
