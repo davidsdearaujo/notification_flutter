@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../notfication-resume/notification-resume-model.dart';
 import 'firebase-messaging-receive-bloc.dart';
-import '../notfication-resume/notification-resume-screen.dart';
+import '../notfication-display/notification-display-model.dart';
+import '../notfication-display/notification-display-screen.dart';
 
 mixin ScaffoldNotificationMixin<T extends StatefulWidget> on State<T> {
   FirebaseMessagingReceiveBloc _bloc;
@@ -46,10 +46,10 @@ mixin ScaffoldNotificationMixin<T extends StatefulWidget> on State<T> {
     });
   }
 
-  void _abrirNotificacao(NotificationResumeModel notificacao) {
+  void _abrirNotificacao(NotificationDisplayModel notificacao) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => NotificationResumeScreen(model: notificacao),
+        builder: (context) => NotificationDisplayScreen(model: notificacao),
       ),
     );
   }

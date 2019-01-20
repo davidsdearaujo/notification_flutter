@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 
-import '../notfication-resume/notification-resume-model.dart';
+import '../notfication-display/notification-display-model.dart';
 
 class FirebaseMessagingReceiveBloc {
   FirebaseMessagingReceiveBloc();
@@ -10,11 +10,11 @@ class FirebaseMessagingReceiveBloc {
     return _instance;
   }
 
-  var _notificacaoController = BehaviorSubject<NotificationResumeModel>();
-  Observable<NotificationResumeModel> get outNotificacao =>
+  var _notificacaoController = BehaviorSubject<NotificationDisplayModel>();
+  Observable<NotificationDisplayModel> get outNotificacao =>
       _notificacaoController.stream;
 
-  void adicionarNotificacao(NotificationResumeModel notificacao) {
+  void adicionarNotificacao(NotificationDisplayModel notificacao) {
     _notificacaoController.add(notificacao);
   }
 

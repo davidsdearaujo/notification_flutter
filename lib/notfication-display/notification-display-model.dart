@@ -1,4 +1,4 @@
-class NotificationResumeModel {
+class NotificationDisplayModel {
   int id;
   String uid;
   int listaId;
@@ -14,7 +14,7 @@ class NotificationResumeModel {
   String enviadoem;
   int tempoEmMs;
 
-  NotificationResumeModel({
+  NotificationDisplayModel({
     this.id,
     this.uid,
     this.listaId,
@@ -31,8 +31,8 @@ class NotificationResumeModel {
     this.tempoEmMs
   });
 
-  factory NotificationResumeModel.fromJson(Map<String, dynamic> parsedJson) {
-    return NotificationResumeModel(
+  factory NotificationDisplayModel.fromJson(Map<String, dynamic> parsedJson) {
+    return NotificationDisplayModel(
       arquivo: parsedJson["arquivo"],
       createdAt: parsedJson["created_at"],
       data: parsedJson["data"],

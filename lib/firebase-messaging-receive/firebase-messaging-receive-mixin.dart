@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../notfication-resume/notification-resume-model.dart';
+import '../notfication-display/notification-display-model.dart';
 import 'firebase-messaging-receive-bloc.dart';
 
 BuildContext currentContext;
@@ -20,7 +20,7 @@ mixin FirebaseMessagingReceiveMixin<T extends StatefulWidget> on State<T> {
       },
       onResume: (Map<String, dynamic> msg) {
         print("onResume called");
-        var notificacao = NotificationResumeModel.fromJson(
+        var notificacao = NotificationDisplayModel.fromJson(
           json.decode(msg["notificacao"]),
         );
         bloc.adicionarNotificacao(notificacao);
@@ -29,7 +29,7 @@ mixin FirebaseMessagingReceiveMixin<T extends StatefulWidget> on State<T> {
       onMessage: (Map<String, dynamic> msg) {
         print("onMessage called");
         //msg ---- {notification: {title: teste01, body: esse é um teste!}, data: {}}
-        var notificacao = NotificationResumeModel.fromJson(
+        var notificacao = NotificationDisplayModel.fromJson(
           json.decode(msg["data"]["notificacao"]),
         );
         bloc.adicionarNotificacao(notificacao);

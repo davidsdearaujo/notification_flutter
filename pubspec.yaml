@@ -28,6 +28,7 @@ dependencies:
   dio: ^1.0.13
   chewie: ^0.8.0
   loadmore: ^1.0.2
+  # shimmer: ^1.0.0
   # custom_chewie: ^0.7.0
   
 

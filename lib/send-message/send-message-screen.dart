@@ -193,7 +193,8 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                     child: RaisedButton(
                       color: Theme.of(context).accentColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                       onPressed: () =>
                           helper.showVideo(context, bloc.setSelectedVideo),
                       child: Row(
@@ -244,8 +245,9 @@ class _SendMessageScreenState extends State<SendMessageScreen>
       stream: bloc.outDataProgramacao,
       builder: (_, dateSnap) {
         return FlatButton(
-          child:
-              Text(DateTimeHelper.dateFormat(dateSnap.data ?? DateTime.now())),
+          child: Text(
+            DateTimeHelper.dateFormat(dateSnap.data ?? DateTime.now()),
+          ),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -302,7 +304,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                     "ENVIAR NOTIFICAÇÃO",
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   )
-                : LoadingWidget(color:Colors.white),
+                : LoadingWidget(color: Colors.white),
             onPressed: () {
               if (loading.hasData && !loading.data) {
                 bloc.enviar(

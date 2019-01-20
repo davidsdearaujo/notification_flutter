@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../notifications-list-model.dart';

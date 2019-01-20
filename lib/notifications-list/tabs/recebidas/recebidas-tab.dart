@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loadmore/loadmore.dart';
 
-import '../../../notfication-resume/notification-resume-model.dart';
-import '../../../notfication-resume/notification-resume-screen.dart';
+import '../../../notfication-display/notification-display-model.dart';
+import '../../../notfication-display/notification-display-screen.dart';
 import '../../../widgets/loading/loading-widget.dart';
 import '../../notifications-list-model.dart';
 import 'recebidas-bloc.dart';
@@ -83,9 +83,10 @@ class _RecebidasTabState extends State<RecebidasTab>
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => NotificationResumeScreen(
-                              model: NotificationResumeModel.fromJson(
-                                  currentItem.parsedJson),
+                        builder: (context) => NotificationDisplayScreen(
+                              model: NotificationDisplayModel.fromJson(
+                                currentItem.parsedJson,
+                              ),
                             ),
                       ),
                     );

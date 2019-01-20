@@ -1,21 +1,22 @@
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+// import 'package:shimmer/shimmer.dart';
 
-import 'notification-resume-model.dart';
+import '../widgets/loading/loading-widget.dart';
+import 'notification-display-model.dart';
 import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 
-class NotificationResumeScreen extends StatefulWidget {
-  final NotificationResumeModel model;
+class NotificationDisplayScreen extends StatefulWidget {
+  final NotificationDisplayModel model;
 
-  const NotificationResumeScreen({Key key, this.model}) : super(key: key);
+  const NotificationDisplayScreen({Key key, this.model}) : super(key: key);
   @override
-  _NotificationResumeScreenState createState() =>
-      _NotificationResumeScreenState();
+  _NotificationDisplayScreenState createState() =>
+      _NotificationDisplayScreenState();
 }
 
-class _NotificationResumeScreenState extends State<NotificationResumeScreen>
+class _NotificationDisplayScreenState extends State<NotificationDisplayScreen>
     with ScaffoldNotificationMixin {
   VideoPlayerController playerController;
   @override
@@ -69,8 +70,22 @@ class _NotificationResumeScreenState extends State<NotificationResumeScreen>
         return ListTile(title: Text(widget.model.texto));
 
       case TipoEnum.imagem:
-        return Image.network(widget.model.arquivo);
-        
+        return Stack(
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: 1,
+              child: LoadingWidget(small: false),
+              
+              // Shimmer.fromColors(
+              //   baseColor: Colors.grey[300],
+              //   highlightColor: Colors.grey[250],
+              //   child: Image.network(widget.model.arquivo),
+              // ),
+            ),
+            Image.network(widget.model.arquivo),
+          ],
+        );
+
       case TipoEnum.video:
         return Chewie(
           playerController,
