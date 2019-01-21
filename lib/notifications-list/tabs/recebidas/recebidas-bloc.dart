@@ -4,11 +4,15 @@ import '../../notifications-list-model.dart';
 import '../../notifications-list-service.dart';
 
 class RecebidasBloc {
-  var service = NotificationsListService();
-
+  NotificationsListService service;
   int _currentPage = 0;
   int _lastPage = 0;
   bool _isLoading = false;
+
+  RecebidasBloc(String uid){
+    service = NotificationsListService(uid);
+  }
+  
   bool get isLoading => _isLoading;
   bool get isFinish => (_lastPage != 0 && _lastPage <= _currentPage);
 

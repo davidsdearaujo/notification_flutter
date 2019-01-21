@@ -8,6 +8,12 @@ import '../../notifications-list-model.dart';
 import 'enviadas-bloc.dart';
 
 class EnviadasTab extends StatefulWidget {
+  final String uid;
+
+  const EnviadasTab({Key key, @required this.uid})
+      : assert(uid != null),
+        super(key: key);
+
   @override
   _EnviadasTabState createState() => _EnviadasTabState();
 }
@@ -22,7 +28,7 @@ class _EnviadasTabState extends State<EnviadasTab>
   @override
   void initState() {
     super.initState();
-    bloc = EnviadasBloc();
+    bloc = EnviadasBloc(widget.uid);
     bloc..buscarNotificacoes();
   }
 
@@ -45,7 +51,6 @@ class _EnviadasTabState extends State<EnviadasTab>
             onLoadMore: bloc.buscarNotificacoes,
             textBuilder: (status) {
               switch (status) {
-
                 case LoadMoreStatus.fail:
                   return "Não foi possível buscar os dados";
 

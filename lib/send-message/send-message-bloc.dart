@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,9 +12,9 @@ class SendMessageBloc {
   SendMessageService service;
   VideoPlayerController playerController;
 
-  String uid = "FEn2LN2KM6ZprhpeUul9ui6Ynm23";
+  String uid;
 
-  SendMessageBloc() {
+  SendMessageBloc(this.uid) {
     service = SendMessageService();
     outListTopics = Observable.fromFuture(service.getTopics());
   }
@@ -102,7 +103,97 @@ class SendMessageBloc {
     _selectedHoraProgramacaoController.add(time);
   }
 
+  // final _validateField =
+  //     StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
+  //   String text = value.trim();
+  //   if (text.isEmpty) {
+  //     sink.addError(new Exception("Campo obrigatório"));
+  //   } else {
+  //     sink.add(text);
+  //   }
+  // });
+
+  String validateTitle(String value) {
+    String text = value.trim();
+    if (text.isEmpty) {
+      return "Campo obrigatório";
+    } else {
+      _tituloController.add(text);
+      return null;
+    }
+  }
+
+  String validateTexto(String value) {
+    String text = value.trim();
+    if (_selectedTypeController.value.tipo == TipoEnum.texto && text.isEmpty) {
+      return "Campo obrigatório";
+    } else {
+      _textoController.add(text);
+      return null;
+    }
+  }
+
+  String validateDropdown<T>(T value) {
+    String response;
+
+    if (value == null) response = "Campo obrigatório";
+    return response;
+  }
+
+  //Titulo
+  var _tituloController = BehaviorSubject<String>(seedValue: "");
+  // Observable<String> get outTitulo =>_tituloController.stream;//.transform(_validateField);
+  // Sink<String> get outTituloSink => _tituloController.sink;
+
+  //Texto
+  var _textoController = BehaviorSubject<String>(seedValue: "");
+  // Observable<String> get outConteudo =>_textoController.stream;//.transform(_validateField);
+  // Sink<String> get outConteudoSink => _textoController.sink;
+
   //Salvar
+  var _salvarFlux = BehaviorSubject<bool>(seedValue: false);
+  Sink<bool> get salvarSink => _salvarFlux.sink;
+  Stream<bool> get salvarStream => _salvarFlux
+          .distinct()
+          .where((val) => val)
+          .debounce(Duration(seconds: 5))
+          .asyncMap((val) async {
+        DateTime data = (_selectedProgramacaoController.value == "Agora")
+            ? DateTime.now()
+            : _selectedDataProgramacaoController.value;
+
+        TimeOfDay hora = (_selectedProgramacaoController.value == "Agora")
+            ? TimeOfDay.now()
+            : _selectedHoraProgramacaoController.value;
+
+        File arquivo;
+        switch (_selectedTypeController.value.tipo) {
+          case TipoEnum.imagem:
+            arquivo = _selectedImageController.value;
+            break;
+
+          case TipoEnum.video:
+            arquivo = _selectedVideoController.value;
+            break;
+
+          default:
+            arquivo = null;
+            break;
+        }
+
+        await service.sendMessage(
+          uid: this.uid,
+          data: data,
+          hora: hora,
+          listaId: _selectedTopicController.value.id,
+          tipo: _selectedTypeController.value.tipo,
+          titulo: _tituloController.value,
+          texto: _textoController.value,
+          arquivo: arquivo,
+        );
+      }).switchMap((v) => _salvarFlux)
+            ..doOnDone(() => _salvarFlux.add(false));
+
   var _salvarIsLoadingController = BehaviorSubject<bool>(seedValue: false);
   Observable<bool> get outSalvarIsLoading => _salvarIsLoadingController.stream;
 
@@ -131,7 +222,7 @@ class SendMessageBloc {
           case TipoEnum.texto:
             if (texto == null || texto == "")
               // _selectedVideoController.addError("Campo obrigatório.");
-            break;
+              break;
         }
       }
 
@@ -184,6 +275,9 @@ class SendMessageBloc {
     _selectedDataProgramacaoController.close();
     _selectedHoraProgramacaoController.close();
 
+    _tituloController.close();
+    _textoController.close();
+    _salvarFlux.close();
     _salvarIsLoadingController.close();
     playerController?.dispose();
   }

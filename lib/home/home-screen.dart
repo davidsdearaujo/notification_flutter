@@ -11,10 +11,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with ScaffoldNotificationMixin {
+  final String uid = "FEn2LN2KM6ZprhpeUul9ui6Ynm23";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
+        key: scaffoldKey,
         appBar: AppBar(
           title: Text("Home"),
           centerTitle: true,
@@ -35,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
                 label: "Nova notificação",
                 action: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => SendMessageScreen(),
+                        builder: (context) => SendMessageScreen(uid: uid),
                       ),
                     ),
               ),
@@ -44,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen>
                 label: "Histórico 1",
                 action: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => NotificationsListScreen(),
+                        builder: (context) => NotificationsListScreen(uid: uid),
                       ),
                     ),
               ),
@@ -53,7 +55,10 @@ class _HomeScreenState extends State<HomeScreen>
                 label: "Histórico Recebidos",
                 action: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => NotificationsListScreen(somenteRecebidos: true),
+                        builder: (context) => NotificationsListScreen(
+                              somenteRecebidos: true,
+                              uid: uid,
+                            ),
                       ),
                     ),
               ),
@@ -104,7 +109,11 @@ class _HomeScreenState extends State<HomeScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(icon, color: Colors.white, size: 55),
-            Text(label, style: TextStyle(color: Colors.white, fontSize: 20), textAlign: TextAlign.center,)
+            Text(
+              label,
+              style: TextStyle(color: Colors.white, fontSize: 20),
+              textAlign: TextAlign.center,
+            )
           ],
         ),
       ),

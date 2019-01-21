@@ -5,11 +5,15 @@ import 'package:http/http.dart' as http;
 
 class NotificationsListService {
   final url = "https://app.lagoinha.com/api/app";
-  final uid = "FEn2LN2KM6ZprhpeUul9ui6Ynm23";
+  final String uid;
+  final sizeLimit = 50;
+
+  NotificationsListService(this.uid);
+
 
   Future<ServiceRequestModel> buscarListaNotificacoesRecebidas(int page) async {
     var httpResponse =
-        await http.get("$url/getlistanotificacaorecebida?uid=$uid&page=$page");
+        await http.get("$url/getlistanotificacaorecebida?uid=$uid&page=$page&limit=$sizeLimit");
 
     print("Response status: ${httpResponse.statusCode}");
     print("Response body: ${httpResponse.body}");
@@ -21,7 +25,7 @@ class NotificationsListService {
 
   Future<ServiceRequestModel> buscarListaNotificacoesEnviadas(int page) async {
     var httpResponse =
-        await http.get("$url/getlistanotificacaoenviada?uid=$uid&page=$page");
+        await http.get("$url/getlistanotificacaoenviada?uid=$uid&page=$page&limit=$sizeLimit");
 
     print("Response status: ${httpResponse.statusCode}");
     print("Response body: ${httpResponse.body}");

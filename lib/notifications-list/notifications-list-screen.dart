@@ -5,9 +5,14 @@ import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 
 class NotificationsListScreen extends StatefulWidget {
   final bool somenteRecebidos;
+  final String uid;
 
-  const NotificationsListScreen({Key key, this.somenteRecebidos = false})
-      : super(key: key);
+  const NotificationsListScreen({
+    Key key,
+    this.somenteRecebidos = false,
+    @required this.uid,
+  })  : assert(uid != null),
+        super(key: key);
   @override
   _NotificationsListScreenState createState() =>
       _NotificationsListScreenState();
@@ -26,7 +31,7 @@ class _NotificationsListScreenState extends State<NotificationsListScreen>
       appBar: AppBar(
         title: Text("Histórico de notificações recebidas"),
       ),
-      body: RecebidasTab(),
+      body: RecebidasTab(uid: widget.uid),
     );
   }
 
@@ -46,8 +51,8 @@ class _NotificationsListScreenState extends State<NotificationsListScreen>
         ),
         body: TabBarView(
           children: [
-            EnviadasTab(),
-            RecebidasTab(),
+            EnviadasTab(uid: widget.uid),
+            RecebidasTab(uid: widget.uid),
           ],
         ),
       ),

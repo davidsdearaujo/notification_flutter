@@ -3,17 +3,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 
+import '../helpers/date-time-helper.dart';
+import '../helpers/image-picker-helper.dart';
+import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 import '../widgets/dropdown/dropdown-widget.dart';
 import '../widgets/loading/loading-widget.dart';
+
 import 'send-message-model.dart';
 import 'send-message-bloc.dart';
 import 'send-message-service.dart';
 
-import '../helpers/date-time-helper.dart';
-import '../helpers/image-picker-helper.dart';
-import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
-
 class SendMessageScreen extends StatefulWidget {
+  final String uid;
+
+  const SendMessageScreen({Key key, @required this.uid})
+      : assert(uid != null),
+        super(key: key);
+
   @override
   _SendMessageScreenState createState() => _SendMessageScreenState();
 }
@@ -22,19 +28,28 @@ class _SendMessageScreenState extends State<SendMessageScreen>
     with ScaffoldNotificationMixin {
   SendMessageBloc bloc;
   ImagePickerHelper helper;
+  var _formKey = GlobalKey<FormState>();
 
-  var conteudoController = TextEditingController();
-  var tituloController = TextEditingController();
+  TextEditingController conteudoController;
+  TextEditingController tituloController;
+
+  // void tituloListener() => bloc.outTituloSink.add(tituloController.text);
+  // void conteudoListener() => bloc.outConteudoSink.add(conteudoController.text);
 
   @override
   void initState() {
     super.initState();
     helper = ImagePickerHelper();
-    bloc = SendMessageBloc();
+    bloc = SendMessageBloc(widget.uid);
+
+    tituloController = TextEditingController();//..addListener(tituloListener);
+    conteudoController = TextEditingController();//..addListener(conteudoListener);
   }
 
   @override
   void dispose() {
+    // tituloController.removeListener(tituloListener);
+    // conteudoController.removeListener(conteudoListener);
     bloc.dispose();
     conteudoController.dispose();
     tituloController.dispose();
@@ -46,41 +61,49 @@ class _SendMessageScreenState extends State<SendMessageScreen>
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(title: Text("Nova Notificação")),
-      body: ListView(
-        padding: EdgeInsets.all(15),
-        children: <Widget>[
-          DropdownWidget<Topico>(
-            listStream: bloc.outListTopics,
-            selectedStream: bloc.outSelectedTopic,
-            setSelected: bloc.outSinkSelectedTopic.add,
-            label: "Tópico",
-          ),
-          DropdownWidget(
-            listStream: bloc.outListProgramacao,
-            selectedStream: bloc.outSelectedProgramacao,
-            setSelected: bloc.setSelectedProgramacao,
-            label: "Programação",
-          ),
-          _buildDateTimeButtons(),
-          DropdownWidget<TipoMensagemModel>(
-            listStream: bloc.outListTypes,
-            selectedStream: bloc.outSelectedType,
-            setSelected: bloc.setType,
-            label: "Tipo de Mensagem",
-          ),
-          SizedBox(height: 15),
-          TextFormField(
-            controller: tituloController,
-            maxLength: 100,
-            maxLines: null,
-            decoration: InputDecoration(labelText: "Título"),
-            keyboardType: TextInputType.multiline,
-          ),
-          SizedBox(height: 25),
-          _buildContentWidget(),
-          SizedBox(height: 25),
-          _buildBotaoSalvar(),
-        ],
+      body: Form(
+        key: _formKey,
+        // autovalidate: true,
+        child: ListView(
+          padding: EdgeInsets.all(15),
+          children: <Widget>[
+            DropdownWidget<Topico>(
+              listStream: bloc.outListTopics,
+              selectedStream: bloc.outSelectedTopic,
+              setSelected: bloc.outSinkSelectedTopic.add,
+              // validator: bloc.validateDropdown,
+              label: "Tópico",
+            ),
+            DropdownWidget(
+              listStream: bloc.outListProgramacao,
+              selectedStream: bloc.outSelectedProgramacao,
+              setSelected: bloc.setSelectedProgramacao,
+              // validator: bloc.validateDropdown,
+              label: "Programação",
+            ),
+            _buildDateTimeButtons(),
+            DropdownWidget<TipoMensagemModel>(
+              listStream: bloc.outListTypes,
+              selectedStream: bloc.outSelectedType,
+              setSelected: bloc.setType,
+              // validator: bloc.validateDropdown,
+              label: "Tipo de Mensagem",
+            ),
+            SizedBox(height: 15),
+            TextFormField(
+              controller: tituloController,
+              maxLength: 100,
+              maxLines: null,
+              decoration: InputDecoration(labelText: "Título"),
+              keyboardType: TextInputType.multiline,
+              validator: bloc.validateTitle,
+            ),
+            SizedBox(height: 25),
+            _buildContentWidget(),
+            SizedBox(height: 25),
+            _buildBotaoSalvar(),
+          ],
+        ),
       ),
     );
   }
@@ -103,6 +126,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
               maxLines: null,
               decoration: InputDecoration(labelText: "Conteúdo"),
               keyboardType: TextInputType.multiline,
+              validator: bloc.validateTexto,
             );
             break;
           default:
@@ -250,11 +274,11 @@ class _SendMessageScreenState extends State<SendMessageScreen>
           ),
           onPressed: () {
             showDatePicker(
-                    context: context,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2022),
-                    initialDate: DateTime.now())
-                .then(
+              context: context,
+              firstDate: DateTime.now(),
+              lastDate: DateTime(2022),
+              initialDate: DateTime.now(),
+            ).then(
               (date) {
                 if (date != null)
                   bloc.setDataProgramacao(date ?? DateTime.now());
@@ -290,7 +314,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
 
   Widget _buildBotaoSalvar() {
     return StreamBuilder<bool>(
-      stream: bloc.outSalvarIsLoading,
+      stream: bloc.salvarStream,
       builder: (context, loading) {
         return Container(
           height: 60,
@@ -306,11 +330,12 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                   )
                 : LoadingWidget(color: Colors.white),
             onPressed: () {
-              if (loading.hasData && !loading.data) {
-                bloc.enviar(
-                  titulo: tituloController.text,
-                  texto: conteudoController.text,
-                );
+              if (loading.hasData && !loading.data && _formKey.currentState.validate()) {
+                bloc.salvarSink.add(true);
+                // bloc.enviar(
+                //   titulo: tituloController.text,
+                //   texto: conteudoController.text,
+                // );
               }
             },
           ),

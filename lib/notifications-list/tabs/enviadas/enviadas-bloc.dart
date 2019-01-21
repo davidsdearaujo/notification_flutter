@@ -4,7 +4,10 @@ import '../../notifications-list-model.dart';
 import '../../notifications-list-service.dart';
 
 class EnviadasBloc {
-  var service = NotificationsListService();
+  NotificationsListService service;
+  EnviadasBloc(String uid) {
+    service = NotificationsListService(uid);
+  }
 
   int _currentPage = 0;
   int _lastPage = 0;

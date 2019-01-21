@@ -8,6 +8,11 @@ import '../../notifications-list-model.dart';
 import 'recebidas-bloc.dart';
 
 class RecebidasTab extends StatefulWidget {
+  final String uid;
+
+  const RecebidasTab({Key key, @required this.uid})
+      : assert(uid != null),
+        super(key: key);
   @override
   _RecebidasTabState createState() => _RecebidasTabState();
 }
@@ -23,7 +28,7 @@ class _RecebidasTabState extends State<RecebidasTab>
   @override
   void initState() {
     super.initState();
-    bloc = RecebidasBloc();
+    bloc = RecebidasBloc(widget.uid);
     bloc..buscarNotificacoes();
     // _scrollController = new ScrollController()..addListener(_scrollListener);
   }
