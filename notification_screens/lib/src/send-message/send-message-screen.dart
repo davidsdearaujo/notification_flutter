@@ -207,7 +207,7 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                           bloc.playerController,
                           aspectRatio: 4 / 2,
                           autoPlay: true,
-                          looping: true,
+                          looping: false,
                         ),
                         Container(
                           alignment: Alignment.topLeft,

@@ -83,7 +83,7 @@ class _NotificationDisplayScreenState extends State<NotificationDisplayScreen> {
           playerController,
           aspectRatio: 4 / 2,
           autoPlay: true,
-          looping: true,
+          looping: false,
         );
 
       default:
