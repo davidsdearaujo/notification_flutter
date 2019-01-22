@@ -185,6 +185,10 @@ class SendMessageBloc {
             content: Text(
                 "Notificação não enviada. Não foram preenchidos todos os campos obrigatórios."),
             duration: Duration(seconds: 1),
+            action: SnackBarAction(
+              label: "OK",
+              onPressed: () {},
+            ),
           ),
         );
       } else {
