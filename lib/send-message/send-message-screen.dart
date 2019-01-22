@@ -33,23 +33,25 @@ class _SendMessageScreenState extends State<SendMessageScreen>
   TextEditingController conteudoController;
   TextEditingController tituloController;
 
-  // void tituloListener() => bloc.outTituloSink.add(tituloController.text);
-  // void conteudoListener() => bloc.outConteudoSink.add(conteudoController.text);
-
   @override
   void initState() {
     super.initState();
     helper = ImagePickerHelper();
     bloc = SendMessageBloc(widget.uid);
 
-    tituloController = TextEditingController();//..addListener(tituloListener);
-    conteudoController = TextEditingController();//..addListener(conteudoListener);
+    tituloController = TextEditingController(); //..addListener(tituloListener);
+    conteudoController =
+        TextEditingController(); //..addListener(conteudoListener);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
   }
 
   @override
   void dispose() {
-    // tituloController.removeListener(tituloListener);
-    // conteudoController.removeListener(conteudoListener);
     bloc.dispose();
     conteudoController.dispose();
     tituloController.dispose();
@@ -58,12 +60,12 @@ class _SendMessageScreenState extends State<SendMessageScreen>
 
   @override
   Widget build(BuildContext context) {
+    bloc.outScaffoldSink.add(scaffoldKey.currentState);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(title: Text("Nova Notificação")),
       body: Form(
         key: _formKey,
-        // autovalidate: true,
         child: ListView(
           padding: EdgeInsets.all(15),
           children: <Widget>[
@@ -71,14 +73,12 @@ class _SendMessageScreenState extends State<SendMessageScreen>
               listStream: bloc.outListTopics,
               selectedStream: bloc.outSelectedTopic,
               setSelected: bloc.outSinkSelectedTopic.add,
-              // validator: bloc.validateDropdown,
               label: "Tópico",
             ),
             DropdownWidget(
               listStream: bloc.outListProgramacao,
               selectedStream: bloc.outSelectedProgramacao,
               setSelected: bloc.setSelectedProgramacao,
-              // validator: bloc.validateDropdown,
               label: "Programação",
             ),
             _buildDateTimeButtons(),
@@ -86,7 +86,6 @@ class _SendMessageScreenState extends State<SendMessageScreen>
               listStream: bloc.outListTypes,
               selectedStream: bloc.outSelectedType,
               setSelected: bloc.setType,
-              // validator: bloc.validateDropdown,
               label: "Tipo de Mensagem",
             ),
             SizedBox(height: 15),
@@ -144,31 +143,47 @@ class _SendMessageScreenState extends State<SendMessageScreen>
         StreamBuilder<File>(
           stream: bloc.outSelectedImage,
           builder: (context, snapshot) {
-            return Container(
-              height: 394,
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    child: (snapshot.hasData)
-                        ? Image.file(snapshot.data, fit: BoxFit.cover)
-                        : null,
-                  ),
-                  Container(color: Color.fromRGBO(0, 0, 0, 490)),
-                  InkWell(
-                    onTap: () => helper.showImage(
-                          context,
-                          bloc.outSelectedImageSink.add,
-                        ),
-                    child: Center(
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.white.withOpacity(0.7),
-                        size: 45,
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  height: 394,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        child: (snapshot.hasData)
+                            ? Image.file(snapshot.data, fit: BoxFit.cover)
+                            : null,
                       ),
-                    ),
+                      Container(
+                          color: (snapshot.hasError)
+                              ? Colors.red.withOpacity(0.5)
+                              : Color.fromRGBO(0, 0, 0, 490)),
+                      InkWell(
+                        onTap: () => helper.showImage(
+                              context,
+                              bloc.outSelectedImageSink.add,
+                            ),
+                        child: Center(
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white.withOpacity(0.7),
+                            size: 45,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 5),
+                  child: (snapshot.hasError)
+                      ? Text(snapshot.error,
+                          style: TextStyle(color: Colors.red))
+                      : Container(),
+                )
+              ],
             );
           },
         ),
@@ -211,6 +226,9 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                       ],
                     ),
             ),
+            (snapshot.hasError)
+                ? Text(snapshot.error, style: TextStyle(color: Colors.red))
+                : Container(),
             (snapshot.data?.path == null)
                 ? Container(
                     height: 60,
@@ -314,7 +332,7 @@ class _SendMessageScreenState extends State<SendMessageScreen>
 
   Widget _buildBotaoSalvar() {
     return StreamBuilder<bool>(
-      stream: bloc.salvarStream,
+      stream: bloc.outSalvarIsLoading,
       builder: (context, loading) {
         return Container(
           height: 60,
@@ -330,12 +348,13 @@ class _SendMessageScreenState extends State<SendMessageScreen>
                   )
                 : LoadingWidget(color: Colors.white),
             onPressed: () {
-              if (loading.hasData && !loading.data && _formKey.currentState.validate()) {
-                bloc.salvarSink.add(true);
-                // bloc.enviar(
-                //   titulo: tituloController.text,
-                //   texto: conteudoController.text,
-                // );
+              if (loading.hasData &&
+                  !loading.data &&
+                  _formKey.currentState.validate()) {
+                bloc.enviar(
+                  titulo: tituloController.text,
+                  texto: conteudoController.text,
+                );
               }
             },
           ),

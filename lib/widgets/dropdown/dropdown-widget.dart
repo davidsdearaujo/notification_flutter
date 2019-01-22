@@ -26,7 +26,7 @@ class DropdownWidget<T> extends StatelessWidget {
           builder: (context, types) {
             if (types.hasData) {
               return InputDecorator(
-                decoration: InputDecoration(labelText: label),
+                decoration: InputDecoration(labelText: label, errorText: selectedType.error),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<T>(
                     value: selectedType.data,

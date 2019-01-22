@@ -147,24 +147,113 @@ class SendMessageBloc {
 
   //Texto
   var _textoController = BehaviorSubject<String>(seedValue: "");
+
+  //Scaffold
+  var _scaffoldController = BehaviorSubject<ScaffoldState>();
+  StreamSink<ScaffoldState> get outScaffoldSink => _scaffoldController.sink;
   // Observable<String> get outConteudo =>_textoController.stream;//.transform(_validateField);
   // Sink<String> get outConteudoSink => _textoController.sink;
 
   //Salvar
-  var _salvarFlux = BehaviorSubject<bool>(seedValue: false);
-  Sink<bool> get salvarSink => _salvarFlux.sink;
-  Stream<bool> get salvarStream => _salvarFlux
-          .distinct()
-          .where((val) => val)
-          .debounce(Duration(seconds: 5))
-          .asyncMap((val) async {
-        DateTime data = (_selectedProgramacaoController.value == "Agora")
-            ? DateTime.now()
-            : _selectedDataProgramacaoController.value;
+  // var _salvarEvent = BehaviorSubject<bool>(seedValue: false);
+  // Sink<bool> get salvarSink => _salvarEvent.sink;
+  // Observable<bool> get salvarFlux => Observable.combineLatest2(salvarIsLoad, _salvarEvent, (a, b)=> b);
+  // salvarIsLoad..switchMap((v) => _salvarEvent.stream);
 
-        TimeOfDay hora = (_selectedProgramacaoController.value == "Agora")
-            ? TimeOfDay.now()
-            : _selectedHoraProgramacaoController.value;
+  // Observable<bool> get salvarIsLoad => _salvarEvent.stream
+  //         .map((v) => v)
+  //         .where((val) => val)
+  //         .debounce(Duration(seconds: 5))
+  //         .asyncMap((val) async {
+  //       DateTime data = (_selectedProgramacaoController.value == "Agora")
+  //           ? DateTime.now()
+  //           : _selectedDataProgramacaoController.value;
+
+  //       TimeOfDay hora = (_selectedProgramacaoController.value == "Agora")
+  //           ? TimeOfDay.now()
+  //           : _selectedHoraProgramacaoController.value;
+
+  //       File arquivo;
+  //       switch (_selectedTypeController.value.tipo) {
+  //         case TipoEnum.imagem:
+  //           arquivo = _selectedImageController.value;
+  //           break;
+
+  //         case TipoEnum.video:
+  //           arquivo = _selectedVideoController.value;
+  //           break;
+
+  //         default:
+  //           arquivo = null;
+  //           break;
+  //       }
+
+  //       await service.sendMessage(
+  //         uid: this.uid,
+  //         data: data,
+  //         hora: hora,
+  //         listaId: _selectedTopicController.value.id,
+  //         tipo: _selectedTypeController.value.tipo,
+  //         titulo: _tituloController.value,
+  //         texto: _textoController.value,
+  //         arquivo: arquivo,
+  //       );
+  //     })
+  //           ..doOnDone(() => _salvarEvent.add(false));
+
+  var _salvarIsLoadingController = BehaviorSubject<bool>(seedValue: false);
+  Observable<bool> get outSalvarIsLoading => _salvarIsLoadingController.stream;
+
+  void enviar({@required String titulo, String texto}) async {
+    _salvarIsLoadingController.add(true);
+    try {
+      //Validação dos campos obrigatórios
+      bool hasError = false;
+      if (_selectedTopicController.value == null) {
+        _selectedTopicController.addError("Campo obrigatório.");
+        hasError = true;
+      }
+
+      if (_selectedTypeController.value == null) {
+        _selectedTypeController.addError("Campo obrigatório.");
+        hasError = true;
+      } else {
+        switch (_selectedTypeController.value.tipo) {
+          case TipoEnum.imagem:
+            if (_selectedImageController.value == null)
+              _selectedImageController.addError("Campo obrigatório.");
+            hasError = true;
+            break;
+
+          case TipoEnum.video:
+            if (_selectedVideoController.value == null)
+              _selectedVideoController
+                  .addError("Você precisa selecionar um vídeo.");
+            hasError = true;
+            break;
+
+          case TipoEnum.texto:
+            if (texto == null || texto == "") hasError = true;
+            // _selectedVideoController.addError("Campo obrigatório.");
+            break;
+        }
+      }
+
+      if (hasError) {
+        _scaffoldController.value?.showSnackBar(
+          SnackBar(
+            content: Text("Notificação não enviada"),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else {
+        bool _agora = (_selectedProgramacaoController.value == "Agora");
+
+        DateTime data =
+            _agora ? DateTime.now() : _selectedDataProgramacaoController.value;
+
+        TimeOfDay hora =
+            _agora ? TimeOfDay.now() : _selectedHoraProgramacaoController.value;
 
         File arquivo;
         switch (_selectedTypeController.value.tipo) {
@@ -187,83 +276,23 @@ class SendMessageBloc {
           hora: hora,
           listaId: _selectedTopicController.value.id,
           tipo: _selectedTypeController.value.tipo,
-          titulo: _tituloController.value,
-          texto: _textoController.value,
+          titulo: titulo,
+          texto: texto,
           arquivo: arquivo,
         );
-      }).switchMap((v) => _salvarFlux)
-            ..doOnDone(() => _salvarFlux.add(false));
-
-  var _salvarIsLoadingController = BehaviorSubject<bool>(seedValue: false);
-  Observable<bool> get outSalvarIsLoading => _salvarIsLoadingController.stream;
-
-  void enviar({@required String titulo, String texto}) async {
-    _salvarIsLoadingController.add(true);
-    try {
-      //Validação dos campos obrigatórios
-      if (_selectedTopicController.value == null) {
-        _selectedTopicController.addError("Campo obrigatório.");
       }
-
-      if (_selectedTypeController.value == null) {
-        _selectedTypeController.addError("Campo obrigatório.");
-      } else {
-        switch (_selectedTypeController.value.tipo) {
-          case TipoEnum.imagem:
-            if (_selectedImageController.value == null)
-              _selectedImageController.addError("Campo obrigatório.");
-            break;
-
-          case TipoEnum.video:
-            if (_selectedVideoController.value == null)
-              _selectedVideoController.addError("Campo obrigatório.");
-            break;
-
-          case TipoEnum.texto:
-            if (texto == null || texto == "")
-              // _selectedVideoController.addError("Campo obrigatório.");
-              break;
-        }
-      }
-
-      DateTime data = (_selectedProgramacaoController.value == "Agora")
-          ? DateTime.now()
-          : _selectedDataProgramacaoController.value;
-
-      TimeOfDay hora = (_selectedProgramacaoController.value == "Agora")
-          ? TimeOfDay.now()
-          : _selectedHoraProgramacaoController.value;
-
-      File arquivo;
-      switch (_selectedTypeController.value.tipo) {
-        case TipoEnum.imagem:
-          arquivo = _selectedImageController.value;
-          break;
-
-        case TipoEnum.video:
-          arquivo = _selectedVideoController.value;
-          break;
-
-        default:
-          arquivo = null;
-          break;
-      }
-
-      await service.sendMessage(
-        uid: this.uid,
-        data: data,
-        hora: hora,
-        listaId: _selectedTopicController.value.id,
-        tipo: _selectedTypeController.value.tipo,
-        titulo: titulo,
-        texto: texto,
-        arquivo: arquivo,
-      );
     } catch (ex) {
-      _salvarIsLoadingController.addError(
+      _scaffoldController.addError(
           Exception("Não foi possível enviar a mensagem. ${ex?.message}"));
     }
     _salvarIsLoadingController.add(false);
+    _scaffoldController.value?.showSnackBar(
+          SnackBar(
+            content: Text("Notificação enviada com sucesso!"),
+            duration: Duration(seconds: 1),
+            action: SnackBarAction(label: "OK",onPressed: () {}, ),
+          ),
+        );
   }
 
   void dispose() {
@@ -275,9 +304,10 @@ class SendMessageBloc {
     _selectedDataProgramacaoController.close();
     _selectedHoraProgramacaoController.close();
 
+    _scaffoldController.close();
+
     _tituloController.close();
     _textoController.close();
-    _salvarFlux.close();
     _salvarIsLoadingController.close();
     playerController?.dispose();
   }
