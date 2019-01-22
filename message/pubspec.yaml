@@ -23,14 +23,13 @@ dependencies:
   image_picker: ^0.4.12
   image_cropper: ^0.0.9
   firebase_messaging: ^2.1.0
-  google_sign_in: ^3.2.4
   http: ^0.12.0+1
   dio: ^1.0.13
   chewie: ^0.8.0
   loadmore: ^1.0.2
-  # shimmer: ^1.0.0
-  # custom_chewie: ^0.7.0
-  
+  notification_screens: 
+    path: ../notification_screens/
+   
 
 dev_dependencies:
   flutter_test:

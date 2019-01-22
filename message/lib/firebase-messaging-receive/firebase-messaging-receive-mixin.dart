@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../notfication-display/notification-display-model.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-screen.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-model.dart';
 import 'firebase-messaging-receive-bloc.dart';
 
 BuildContext currentContext;

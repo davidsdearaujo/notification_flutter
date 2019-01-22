@@ -4,7 +4,6 @@ import 'package:video_player/video_player.dart';
 
 import '../widgets/loading/loading-widget.dart';
 import 'notification-display-model.dart';
-import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 
 class NotificationDisplayScreen extends StatefulWidget {
   final NotificationDisplayModel model;
@@ -15,8 +14,7 @@ class NotificationDisplayScreen extends StatefulWidget {
       _NotificationDisplayScreenState();
 }
 
-class _NotificationDisplayScreenState extends State<NotificationDisplayScreen>
-    with ScaffoldNotificationMixin {
+class _NotificationDisplayScreenState extends State<NotificationDisplayScreen> {
   VideoPlayerController playerController;
   @override
   void initState() {

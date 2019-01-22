@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'tabs/enviadas/enviadas-tab.dart';
 import 'tabs/recebidas/recebidas-tab.dart';
-import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 
 class NotificationsListScreen extends StatefulWidget {
   final bool somenteRecebidos;
@@ -18,8 +17,7 @@ class NotificationsListScreen extends StatefulWidget {
       _NotificationsListScreenState();
 }
 
-class _NotificationsListScreenState extends State<NotificationsListScreen>
-    with ScaffoldNotificationMixin {
+class _NotificationsListScreenState extends State<NotificationsListScreen>{
   @override
   Widget build(BuildContext context) {
     return (widget.somenteRecebidos) ? _buildSomenteRecebidos() : _buildTabs();
@@ -27,7 +25,6 @@ class _NotificationsListScreenState extends State<NotificationsListScreen>
 
   Widget _buildSomenteRecebidos() {
     return Scaffold(
-      key: scaffoldKey,
       appBar: AppBar(
         title: Text("Histórico de notificações recebidas"),
       ),
@@ -39,7 +36,6 @@ class _NotificationsListScreenState extends State<NotificationsListScreen>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        key: scaffoldKey,
         appBar: AppBar(
           title: Text("Histórico de notificações"),
           bottom: TabBar(

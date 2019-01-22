@@ -1,6 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
-import '../notfication-display/notification-display-model.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-screen.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-model.dart';
 
 class FirebaseMessagingReceiveBloc {
   FirebaseMessagingReceiveBloc();

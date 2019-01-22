@@ -218,19 +218,21 @@ class SendMessageBloc {
           texto: texto,
           arquivo: arquivo,
         );
-      }
-    } catch (ex) {
-      _scaffoldController.addError(
-          Exception("Não foi possível enviar a mensagem. ${ex?.message}"));
-    }
-    _salvarIsLoadingController.add(false);
-    _scaffoldController.value?.showSnackBar(
+        
+        _scaffoldController.value?.showSnackBar(
           SnackBar(
             content: Text("Notificação enviada com sucesso!"),
             duration: Duration(seconds: 1),
             action: SnackBarAction(label: "OK",onPressed: () {}, ),
           ),
         );
+      }
+    } catch (ex) {
+      _scaffoldController.addError(
+          Exception("Não foi possível enviar a mensagem. ${ex?.message}"));
+    }
+    _salvarIsLoadingController.add(false);
+    
   }
 
   void dispose() {

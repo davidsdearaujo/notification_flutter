@@ -5,7 +5,6 @@ import 'package:chewie/chewie.dart';
 
 import '../helpers/date-time-helper.dart';
 import '../helpers/image-picker-helper.dart';
-import '../firebase-messaging-receive/scaffold-notification-mixin.dart';
 import '../widgets/dropdown/dropdown-widget.dart';
 import '../widgets/loading/loading-widget.dart';
 
@@ -24,11 +23,11 @@ class SendMessageScreen extends StatefulWidget {
   _SendMessageScreenState createState() => _SendMessageScreenState();
 }
 
-class _SendMessageScreenState extends State<SendMessageScreen>
-    with ScaffoldNotificationMixin {
+class _SendMessageScreenState extends State<SendMessageScreen> {
   SendMessageBloc bloc;
   ImagePickerHelper helper;
   var _formKey = GlobalKey<FormState>();
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
 
   TextEditingController conteudoController;
   TextEditingController tituloController;
@@ -60,9 +59,9 @@ class _SendMessageScreenState extends State<SendMessageScreen>
 
   @override
   Widget build(BuildContext context) {
-    bloc.outScaffoldSink.add(scaffoldKey.currentState);
+    bloc.outScaffoldSink.add(_scaffoldKey.currentState);
     return Scaffold(
-      key: scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(title: Text("Nova Notificação")),
       body: Form(
         key: _formKey,

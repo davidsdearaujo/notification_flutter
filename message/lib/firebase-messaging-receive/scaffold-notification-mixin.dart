@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'firebase-messaging-receive-bloc.dart';
-import '../notfication-display/notification-display-model.dart';
-import '../notfication-display/notification-display-screen.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-screen.dart';
+import 'package:notification_screens/src/notfication-display/notification-display-model.dart';
 
 mixin ScaffoldNotificationMixin<T extends StatefulWidget> on State<T> {
   FirebaseMessagingReceiveBloc _bloc;
