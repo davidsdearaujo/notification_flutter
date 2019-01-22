@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:notification_screens/src/notfication-display/notification-display-screen.dart';
 import 'package:notification_screens/src/notfication-display/notification-display-model.dart';
 import 'firebase-messaging-receive-bloc.dart';
 
@@ -25,11 +24,9 @@ mixin FirebaseMessagingReceiveMixin<T extends StatefulWidget> on State<T> {
           json.decode(msg["notificacao"]),
         );
         bloc.adicionarNotificacao(notificacao);
-        // abrirNotificacao(notificacao);
       },
       onMessage: (Map<String, dynamic> msg) {
         print("onMessage called");
-        //msg ---- {notification: {title: teste01, body: esse é um teste!}, data: {}}
         var notificacao = NotificationDisplayModel.fromJson(
           json.decode(msg["data"]["notificacao"]),
         );

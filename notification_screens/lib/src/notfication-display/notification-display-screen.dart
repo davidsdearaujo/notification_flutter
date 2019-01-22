@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,9 @@ import 'notification-display-model.dart';
 class NotificationDisplayScreen extends StatefulWidget {
   final NotificationDisplayModel model;
 
-  const NotificationDisplayScreen({Key key, this.model}) : super(key: key);
+  const NotificationDisplayScreen({Key key, @required this.model})
+      : assert(model != null),
+        super(key: key);
   @override
   _NotificationDisplayScreenState createState() =>
       _NotificationDisplayScreenState();
