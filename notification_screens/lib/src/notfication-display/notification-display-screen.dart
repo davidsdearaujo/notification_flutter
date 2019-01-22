@@ -1,3 +1,5 @@
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -66,14 +68,13 @@ class _NotificationDisplayScreenState extends State<NotificationDisplayScreen> {
         return ListTile(title: Text(widget.model.texto));
 
       case TipoEnum.imagem:
-        return Stack(
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1,
-              child: LoadingWidget(small: false),
-            ),
-            Image.network(widget.model.arquivo),
-          ],
+        return CachedNetworkImage(
+          imageUrl: widget.model.arquivo,
+          errorWidget: new Icon(Icons.error),
+          placeholder: AspectRatio(
+            aspectRatio: 1,
+            child: LoadingWidget(small: true),
+          ),
         );
 
       case TipoEnum.video:
