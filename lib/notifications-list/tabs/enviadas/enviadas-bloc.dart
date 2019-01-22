@@ -18,8 +18,7 @@ class EnviadasBloc {
   var _pageIsLoadingController = BehaviorSubject<bool>(seedValue: false);
 
   final _apiResults = new ReplaySubject<Set<NotificationsListModel>>();
-  Observable<Set<NotificationsListModel>> get apiResultsFlux =>
-      _apiResults.stream;
+  Observable<Set<NotificationsListModel>> get apiResultsFlux => _apiResults.stream;
   Sink<Set<NotificationsListModel>> get apiResultsEvent => _apiResults.sink;
 
   Observable<List<NotificationsListModel>> get apiTotalFlux =>

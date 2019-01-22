@@ -39,9 +39,9 @@ class _SendMessageScreenState extends State<SendMessageScreen>
     helper = ImagePickerHelper();
     bloc = SendMessageBloc(widget.uid);
 
-    tituloController = TextEditingController(); //..addListener(tituloListener);
+    tituloController = TextEditingController();
     conteudoController =
-        TextEditingController(); //..addListener(conteudoListener);
+        TextEditingController();
   }
 
   @override

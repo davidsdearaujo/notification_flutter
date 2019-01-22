@@ -62,30 +62,6 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
               ),
-              // _buildButton(
-              //   icon: Icons.pie_chart_outlined,
-              //   label: "Produtos",
-              // ),
-              // _buildButton(
-              //   icon: Icons.build,
-              //   label: "Serviços",
-              // ),
-              // _buildButton(
-              //   icon: Icons.attach_money,
-              //   label: "Vendas",
-              // ),
-              // _buildButton(
-              //   icon: Icons.shopping_cart,
-              //   label: "Compras",
-              // ),
-              // _buildButton(
-              //   icon: Icons.directions_bus,
-              //   label: "Fornecedores",
-              // ),
-              // _buildButton(
-              //   icon: Icons.info,
-              //   label: "Iformações",
-              // ),
             ],
           ),
         ));

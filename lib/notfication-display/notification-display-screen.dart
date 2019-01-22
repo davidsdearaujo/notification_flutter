@@ -1,7 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-// import 'package:shimmer/shimmer.dart';
 
 import '../widgets/loading/loading-widget.dart';
 import 'notification-display-model.dart';
@@ -58,7 +57,6 @@ class _NotificationDisplayScreenState extends State<NotificationDisplayScreen>
               : ListTile(
                   title: Text("Enviado para: ${widget.model.enviadopara}"),
                 ),
-          // ListTile(title: Text("Identificador: ${widget.model.id}")),
         ],
       ),
     );
@@ -75,12 +73,6 @@ class _NotificationDisplayScreenState extends State<NotificationDisplayScreen>
             AspectRatio(
               aspectRatio: 1,
               child: LoadingWidget(small: false),
-              
-              // Shimmer.fromColors(
-              //   baseColor: Colors.grey[300],
-              //   highlightColor: Colors.grey[250],
-              //   child: Image.network(widget.model.arquivo),
-              // ),
             ),
             Image.network(widget.model.arquivo),
           ],
