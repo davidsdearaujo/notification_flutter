@@ -159,16 +159,18 @@ class SendMessageBloc {
       } else {
         switch (_selectedTypeController.value.tipo) {
           case TipoEnum.imagem:
-            if (_selectedImageController.value == null)
+            if (_selectedImageController.value == null) {
               _selectedImageController.addError("Campo obrigatório.");
-            hasError = true;
+              hasError = true;
+            }
             break;
 
           case TipoEnum.video:
-            if (_selectedVideoController.value == null)
+            if (_selectedVideoController.value == null) {
               _selectedVideoController
                   .addError("Você precisa selecionar um vídeo.");
-            hasError = true;
+              hasError = true;
+            }
             break;
 
           case TipoEnum.texto:
@@ -180,7 +182,8 @@ class SendMessageBloc {
       if (hasError) {
         _scaffoldController.value?.showSnackBar(
           SnackBar(
-            content: Text("Notificação não enviada"),
+            content: Text(
+                "Notificação não enviada. Não foram preenchidos todos os campos obrigatórios."),
             duration: Duration(seconds: 1),
           ),
         );
@@ -218,12 +221,15 @@ class SendMessageBloc {
           texto: texto,
           arquivo: arquivo,
         );
-        
+
         _scaffoldController.value?.showSnackBar(
           SnackBar(
             content: Text("Notificação enviada com sucesso!"),
             duration: Duration(seconds: 1),
-            action: SnackBarAction(label: "OK",onPressed: () {}, ),
+            action: SnackBarAction(
+              label: "OK",
+              onPressed: () {},
+            ),
           ),
         );
       }
@@ -232,7 +238,6 @@ class SendMessageBloc {
           Exception("Não foi possível enviar a mensagem. ${ex?.message}"));
     }
     _salvarIsLoadingController.add(false);
-    
   }
 
   void dispose() {
