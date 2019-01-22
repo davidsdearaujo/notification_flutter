@@ -17,10 +17,24 @@ Para utilizar essa notificação, basta seguir os seguintes passos:
  - Adicionar o mixin **ScaffoldNotificationMixin**, conforme demonstrado no arquivo `message > lib > home > home-screen.dart`;
 
 ## Utilizando as telas
-Para utilizar as telas, basta copiar a pasta **notification_screens** para a mesma pasta do seu projeto, poe exemplo:
- - Se seu projeto se chama *meuprojeto* e está na pasta *src*, adicione a pasta **notification_screens** à pasta *src*. 
+Para utilizar as telas, podem ser realizados dois processos:
+ 1. Copie a pasta **notification_screens** para a mesma pasta do seu projeto, por exemplo:
+   - Se seu projeto se chama *meuprojeto* e está na pasta *src*, adicione a pasta **notification_screens** à pasta *src*. 
+   - Adicione a referência no **pubspec.yaml** de seu projeto dessa forma:
+``` 
+  notification_screens: 
+    path: ../notification_screens/;
+```
+    
+ 2. Adicione a referência no **pubspec.yaml** de seu projeto dessa forma:
+```
+  notification_screens:
+    git:
+      url: git://github.com/davidsdearaujo/notification_flutter.git
+      path: notification_screens
+```
 
-#NotificationDisplayScreen
+### NotificationDisplayScreen
 *Responsável por mostrar os detalhes da notificação ao usuário, seja ao clicar na notificação com o app fechado ou aberto;*
  - `import 'package:notification_screens/src/notfication-display/notification-display-screen.dart';`
  - `import 'package:notification_screens/src/notfication-display/notification-display-model.dart';`
@@ -29,7 +43,7 @@ Parâmetros de entrada:
  - *NotificationDisplayModel* model;
 
 
-#NotificationListScreen
+### NotificationListScreen
 *Responsável por mostrar o hitórico de notificações enviadas e recebidas.*
  - `import 'package:notification_screens/src/notifications-list/notifications-list-screen.dart';`
 
@@ -38,7 +52,7 @@ Parâmetros de entrada:
     - *bool* somenteRecebidos (default *false*); ~ *Booleano não-obrigatório para sinalizar se a listagem envolve apenas as notificações recebidas;
 
 
-#SendMessageScreen
+### SendMessageScreen
 *Responsável por mostrar o hitórico de notificações enviadas e recebidas.*
  - `import 'package:notification_screens/src/send-message/send-message-screen.dart';`
 
@@ -46,7 +60,7 @@ Parâmetros de entrada:
     - *String* uid; ~ *Identificador do usuário*
 
 
-##Flutter
+# Flutter
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
