@@ -21,12 +21,12 @@ dependencies:
   cupertino_icons: ^0.1.2
   firebase_messaging: ^2.1.0
   rxdart: ^0.20.0
-  # notification_screens: 
-  #   path: ../notification_screens/
-  notification_screens:
-    git:
-      url: git://github.com/davidsdearaujo/notification_flutter.git
-      path: notification_screens
+  notification_screens: 
+    path: ../notification_screens/
+  # notification_screens:
+  #   git:
+  #     url: git://github.com/davidsdearaujo/notification_flutter.git
+  #     path: notification_screens
    
 
 dev_dependencies:

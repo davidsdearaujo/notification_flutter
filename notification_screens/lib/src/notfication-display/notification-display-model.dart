@@ -52,7 +52,7 @@ class NotificationDisplayModel {
 }
 
 
-enum TipoEnum { texto, imagem, video }
+enum TipoEnum { texto, imagem, video, youtube }
 
 class TipoMensagemModel {
   final TipoEnum tipo;
@@ -68,6 +68,7 @@ class TipoMensagemModel {
     TipoMensagemModel(tipo: TipoEnum.texto, texto: "Texto", apiValue: "T"),
     TipoMensagemModel(tipo: TipoEnum.imagem, texto: "Imagem", apiValue: "I"),
     TipoMensagemModel(tipo: TipoEnum.video, texto: "Vídeo", apiValue: "V"),
+    TipoMensagemModel(tipo: TipoEnum.youtube, texto: "Youtube", apiValue: "Y"),
   ];
 
   factory TipoMensagemModel.fromEnum(TipoEnum tipo) =>

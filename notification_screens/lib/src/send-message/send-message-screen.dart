@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
+import 'package:youtubeplayer/youtube-player-widget.dart';
 
 import '../helpers/date-time-helper.dart';
 import '../helpers/image-picker-helper.dart';
@@ -31,6 +32,7 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
 
   TextEditingController conteudoController;
   TextEditingController tituloController;
+  TextEditingController youtubeController;
 
   @override
   void initState() {
@@ -39,21 +41,23 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
     bloc = SendMessageBloc(widget.uid);
 
     tituloController = TextEditingController();
-    conteudoController =
-        TextEditingController();
+    conteudoController = TextEditingController();
+    youtubeController = TextEditingController();
+
+    youtubeController.addListener(youtubeValidation);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
+  void youtubeValidation() {
+    bloc.validateYoutube(youtubeController.text);
   }
 
   @override
   void dispose() {
+    youtubeController.removeListener(youtubeValidation);
     bloc.dispose();
     conteudoController.dispose();
     tituloController.dispose();
+    youtubeController.dispose();
     super.dispose();
   }
 
@@ -127,10 +131,48 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
               validator: bloc.validateTexto,
             );
             break;
-          default:
-            return Container();
+          case TipoEnum.youtube:
+            return _buildYoutubeContent();
             break;
         }
+      },
+    );
+  }
+
+  Widget _buildYoutubeContent() {
+    return StreamBuilder<String>(
+      stream: bloc.outSelectedYoutube,
+      builder: (context, snapshot) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            (snapshot.hasData && snapshot.data.isNotEmpty)
+                ? Stack(
+                    children: <Widget>[
+                      YoutubePlayerWidget(link: snapshot.data),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.all(5),
+                        child: FloatingActionButton(
+                          child: Icon(Icons.video_call),
+                          onPressed: () => youtubeController.text = "",
+                          tooltip: "Alterar Vídeo",
+                          mini: true,
+                        ),
+                      ),
+                    ],
+                  )
+                : TextFormField(
+                    autovalidate: true,
+                    controller: youtubeController,
+                    maxLength: 50,
+                    decoration: InputDecoration(
+                      labelText: "Link do Youtube",
+                    ),
+                    validator: (val) => snapshot.error,
+                  ),
+          ],
+        );
       },
     );
   }
@@ -178,8 +220,10 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, left: 5),
                   child: (snapshot.hasError)
-                      ? Text(snapshot.error,
-                          style: TextStyle(color: Colors.red))
+                      ? Text(
+                          snapshot.error,
+                          style: TextStyle(color: Colors.red),
+                        )
                       : Container(),
                 )
               ],

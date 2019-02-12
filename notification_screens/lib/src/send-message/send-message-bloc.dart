@@ -103,6 +103,16 @@ class SendMessageBloc {
     _selectedHoraProgramacaoController.add(time);
   }
 
+  String validateDropdown<T>(T value) {
+    String response;
+
+    if (value == null) response = "Campo obrigatório";
+    return response;
+  }
+
+  //Titulo
+  var _tituloController = BehaviorSubject<String>(seedValue: "");
+
   String validateTitle(String value) {
     String text = value.trim();
     if (text.isEmpty) {
@@ -112,6 +122,9 @@ class SendMessageBloc {
       return null;
     }
   }
+
+  //Texto
+  var _textoController = BehaviorSubject<String>(seedValue: "");
 
   String validateTexto(String value) {
     String text = value.trim();
@@ -123,18 +136,23 @@ class SendMessageBloc {
     }
   }
 
-  String validateDropdown<T>(T value) {
-    String response;
+  //Youtube
+  var _youtubeController = BehaviorSubject<String>(seedValue: "");
+  Observable<String> get outSelectedYoutube => _youtubeController.stream.debounce(Duration(seconds: 1));
 
-    if (value == null) response = "Campo obrigatório";
-    return response;
+  void validateYoutube(String value) {
+    String text = value.trim();
+    if (_youtubeController.value != text) _youtubeController.add(text);
+    if (text.isEmpty || text.length < 11) {
+      _youtubeController.addError("Campo obrigatório");
+    }
+    // else if(!text.contains("youtube.com") && !text.contains("youtu.be")){
+    //   _youtubeController.addError("Link inválido");
+    // }
+    else {
+      return null;
+    }
   }
-
-  //Titulo
-  var _tituloController = BehaviorSubject<String>(seedValue: "");
-
-  //Texto
-  var _textoController = BehaviorSubject<String>(seedValue: "");
 
   //Scaffold
   var _scaffoldController = BehaviorSubject<ScaffoldState>();
@@ -176,6 +194,12 @@ class SendMessageBloc {
           case TipoEnum.texto:
             if (texto == null || texto == "") hasError = true;
             break;
+
+          case TipoEnum.youtube:
+            if (_youtubeController.value == null ||
+                _youtubeController.value.isEmpty) {
+              hasError = true;
+            }
         }
       }
 
@@ -257,6 +281,7 @@ class SendMessageBloc {
 
     _tituloController.close();
     _textoController.close();
+    _youtubeController.close();
     _salvarIsLoadingController.close();
     playerController?.dispose();
   }

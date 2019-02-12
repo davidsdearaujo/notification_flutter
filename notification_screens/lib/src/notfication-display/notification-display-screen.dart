@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:notification_screens/src/widgets/youtube-player/youtube-player-widget.dart';
 import 'package:video_player/video_player.dart';
 
 import '../widgets/loading/loading-widget.dart';
@@ -86,8 +87,11 @@ class _NotificationDisplayScreenState extends State<NotificationDisplayScreen> {
           looping: false,
         );
 
-      default:
-        return Container();
+      case TipoEnum.youtube:
+        return YoutubePlayerWidget(
+          link: widget.model.arquivo,
+          autoPlay: true,
+        );
     }
   }
 }

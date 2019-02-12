@@ -70,7 +70,7 @@ packages:
       name: dio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.13"
+    version: "1.0.15"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -83,6 +83,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0+1"
+  flutter_inappbrowser:
+    dependency: "direct main"
+    description:
+      name: flutter_inappbrowser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.51"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -137,6 +144,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  mime:
+    dependency: transitive
+    description:
+      name: mime
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.6+2"
   open_iconic_flutter:
     dependency: transitive
     description:
@@ -261,6 +275,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.2"
+  youtubeplayer:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: c1c2aea3b21290edbde554b362b758b10a757bc4
+      url: "git://github.com/davidsdearaujo/youtubeplayer.git"
+    source: git
+    version: "0.0.1"
 sdks:
   dart: ">=2.0.0 <3.0.0"
-  flutter: ">=0.3.0 <2.0.0"
+  flutter: ">=0.10.1 <2.0.0"
