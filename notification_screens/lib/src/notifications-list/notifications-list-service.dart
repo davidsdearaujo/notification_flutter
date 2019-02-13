@@ -51,14 +51,13 @@ class ServiceRequestModel {
 
     var response = ServiceRequestModel(
       lastPage: parsedJson["last_page"],
-      total: parsedJson["last_page"],
+      total: parsedJson["total"],
     ); 
-
-    List<Map<String, dynamic>> teste = 
-      parsedJson["data"].cast<Map<String, dynamic>>();
       
-    response.data = teste.map(
-        (item) => NotificationsListModel.fromJson(item),
+
+    response.data = (parsedJson["data"] as List)
+    .map(
+        (item) => NotificationsListModel.fromJson(item.cast<String, dynamic>()),
       ).toList();
 
     return response;

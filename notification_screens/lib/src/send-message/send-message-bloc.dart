@@ -56,7 +56,7 @@ class SendMessageBloc {
 
   void setSelectedVideo(File file) async {
     if (_selectedVideoController.value != null &&
-        playerController?.dataSource != "file://${file.path}") {
+        playerController?.dataSource != "file://${file?.path}") {
       await playerController?.dispose();
       playerController = null;
       playerController = VideoPlayerController.file(file);
@@ -206,8 +206,7 @@ class SendMessageBloc {
       if (hasError) {
         _scaffoldController.value?.showSnackBar(
           SnackBar(
-            content: Text(
-                "Notificação não enviada. Não foram preenchidos todos os campos obrigatórios."),
+            content: Text("Notificação não enviada. Não foram preenchidos todos os campos obrigatórios."),
             duration: Duration(seconds: 1),
             action: SnackBarAction(
               label: "OK",
@@ -218,13 +217,12 @@ class SendMessageBloc {
       } else {
         bool _agora = (_selectedProgramacaoController.value == "Agora");
 
-        DateTime data =
-            _agora ? DateTime.now() : _selectedDataProgramacaoController.value;
-
-        TimeOfDay hora =
-            _agora ? TimeOfDay.now() : _selectedHoraProgramacaoController.value;
+        DateTime data = _agora ? DateTime.now() : _selectedDataProgramacaoController.value;
+        TimeOfDay hora = _agora ? TimeOfDay.now() : _selectedHoraProgramacaoController.value;
 
         File arquivo;
+        String urlYoutube;
+
         switch (_selectedTypeController.value.tipo) {
           case TipoEnum.imagem:
             arquivo = _selectedImageController.value;
@@ -234,12 +232,17 @@ class SendMessageBloc {
             arquivo = _selectedVideoController.value;
             break;
 
+          case TipoEnum.youtube:
+            arquivo = null;
+            urlYoutube = _youtubeController.value;
+            break; 
+
           default:
             arquivo = null;
             break;
         }
 
-        await service.sendMessage(
+        var id = await service.sendMessage(
           uid: this.uid,
           data: data,
           hora: hora,
@@ -248,12 +251,15 @@ class SendMessageBloc {
           titulo: titulo,
           texto: texto,
           arquivo: arquivo,
+          url: urlYoutube,
         );
+
+        print(id);
 
         _scaffoldController.value?.showSnackBar(
           SnackBar(
             content: Text("Notificação enviada com sucesso!"),
-            duration: Duration(seconds: 1),
+            duration: Duration(seconds: 2),
             action: SnackBarAction(
               label: "OK",
               onPressed: () {},
@@ -262,8 +268,19 @@ class SendMessageBloc {
         );
       }
     } catch (ex) {
-      _scaffoldController.addError(
-          Exception("Não foi possível enviar a mensagem. ${ex?.message}"));
+      print(ex);
+      _scaffoldController.value?.showSnackBar(
+          SnackBar(
+            content: Text("Não foi possível enviar a mensagem."),
+            duration: Duration(seconds: 2),
+            action: SnackBarAction(
+              label: "OK",
+              onPressed: () {},
+            ),
+          ),
+        );
+      // _scaffoldController.addError(
+      //     Exception("Não foi possível enviar a mensagem. "));
     }
     _salvarIsLoadingController.add(false);
   }

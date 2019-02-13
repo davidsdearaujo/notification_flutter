@@ -8,10 +8,10 @@ import 'package:path/path.dart';
 import 'send-message-model.dart';
 
 class SendMessageService {
-  var url = "https://app.lagoinha.com/api/app";
+  var urlApi = "https://app.lagoinha.com/api/app";
 
   Future<List<Topico>> getTopics() async {
-    var httpResponse = await http.get("$url/getlista?lista=Todo");
+    var httpResponse = await http.get("$urlApi/getlista?lista=Todo");
 
     print("Response status: ${httpResponse.statusCode}");
     print("Response body: ${httpResponse.body}");
@@ -30,37 +30,44 @@ class SendMessageService {
     @required TimeOfDay hora,
     @required TipoEnum tipo,
     File arquivo,
+    String url,
   }) async {
     Dio dio = new Dio();
-    FormData formdata = new FormData();
-    formdata.add("lista_id", listaId.toString());
-    formdata.add("tipo", TipoMensagemModel.fromEnum(tipo).apiValue);
-    formdata.add("titulo", titulo);
-    formdata.add("uid", uid);
-    formdata.add("data",
-        "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year.toString().padLeft(2, '0')}");
-    formdata.add("hora",
-        "${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}");
+    FormData formdata = FormData.from({
+      "uid": uid,
+      "lista_id": listaId,
+      "titulo": titulo,
+      "data": "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year.toString().padLeft(2, '0')}",
+      "hora": "${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}",
+      "tipo": TipoMensagemModel.fromEnum(tipo).apiValue
+    });
+    
+    switch(tipo){
+      case TipoEnum.youtube:
+        // formdata.add("texto", titulo);
+        formdata.add("url", url);
+        break;
 
-    if (tipo == TipoEnum.texto)
-      formdata.add("texto", texto);
-    else
-      formdata.add("arquivo", new UploadFileInfo(arquivo, basename(arquivo.path)));
+      case TipoEnum.texto:
+        formdata.add("texto", texto);
+        break;
+
+      default: 
+        formdata.add("arquivo", new UploadFileInfo(arquivo, basename(arquivo?.path)));
+      break;
+    }
 
     int _response = 0;
-    try {
-      var response = await dio.post<int>(
-        '$url/postnotificacao',
+
+      var response = await dio.post(
+        '$urlApi/postnotificacao',
         data: formdata,
-        options: Options(method: 'POST', responseType: ResponseType.JSON),
+        // options: Options(method: 'POST', responseType: ResponseType.JSON),
       );
       print(response.statusCode);
       print(response.data);
 
       _response = response.data;
-    } on DioError catch (e) {
-      print(e.message);
-    }
     return _response;
   }
 }
